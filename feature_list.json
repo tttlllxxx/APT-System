@@ -1,0 +1,47 @@
+{
+  "project": "APT系统",
+  "last_updated": "2026-05-20",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "功能还没开始做。",
+    "in_progress": "这个功能是当前唯一正在进行的任务。",
+    "blocked": "因为已记录的阻塞问题，当前无法继续推进。",
+    "passing": "要求的验证已经通过，并且证据已经记录。"
+  },
+  "features": [
+    {
+      "id": "apt-acceptance-prototype",
+      "name": "APT 投标展示与验收原型闭环",
+      "priority": 1,
+      "status": "passing",
+      "goal": "构建自包含 FastAPI + SQLite + Vue 原型，覆盖组织图谱、防护评估、发现溯源、画像评价四个模块，并跑通上传样本到指标达标展示的闭环。",
+      "success_criteria": [
+        "15 个图谱 HTML 和 1000 条剧本数据复制进当前仓库并可由系统读取。",
+        "前端四个模块可切换，组织图谱默认打开第一个图谱并支持侧边切换。",
+        "后端支持 CSV/JSON 流量事件上传解析，PCAP 作为占位入口。",
+        "系统能对内置带标签样本计算 APT 攻击发现准确度和 APT 组织画像成功率，并稳定达标。",
+        "防护评估能浏览 1000 条剧本库攻击路径，按合并后的资产场景域筛选，并在选择单条路径后生成本地规则建议；LLM 未配置时点击增强会给出页面内提示。",
+        "LLM 设置集中在系统设置页内，业务侧边栏不直接展示配置表单。",
+        "前端展示弱化验收话术，顶部概览不展示阈值、状态和电力资产数量。",
+        "./init.sh 能完成依赖同步和基础构建验证。"
+      ],
+      "evidence": [
+        "已复制 15 个图谱 HTML 到 data/graphs，并复制 1000 条剧本 JSON 到 data/scenarios。",
+        "2026-05-20 Session 003：./init.sh 已完成后端依赖安装、前端依赖安装、backend/app 编译和 npm build，退出码 0。",
+        "GET /api/overview 返回组织图谱 15、攻击方法 227、攻击剧本 1000、攻击武器 2482；前端顶部只展示前四项裸数字，不展示阈值、状态和电力资产数量。",
+        "POST /api/analyze/demo 返回 total=320、apt_count=240、benign_count=80、发现准确度 93.75%、画像成功率 76.67%，两项验收状态均为达标。",
+        "POST /api/analyze/upload 已用 JSON 样本验证，CSV/JSON 上传路径可解析并返回溯源、证据链、攻击路径和本地规则建议。",
+        "GET /api/paths?page=1&page_size=2 返回 total=1000、page_size=2；filters 只包含 10 个资产场景域，不再返回 techniques。",
+        "2026-05-20 Session 004：GET /api/paths?assets=变电站域&page=1&page_size=20 返回 total=110；GET /api/paths?assets=调度控制域&page=1&page_size=20 返回 total=258。",
+        "2026-05-20 Session 004：GET /api/paths/APT-SCRIPT-ELEC-0001/recommendations?llm=true 在 LLM 未配置时返回 HTTP 400 和“LLM 未配置，请到系统设置启用并填写 API Key”。",
+        "GET /api/paths/APT-SCRIPT-ELEC-0001/recommendations?llm=false 返回本地规则库 6 条建议。",
+        "浏览器验证 http://127.0.0.1:5173/：组织图谱正常加载；防护评估默认 20 条路径和空态，选中路径后出现阶段详情与 6 条建议；系统设置页包含 LLM 设置；画像评价页不显示验收/要求/达标类话术。",
+        "2026-05-20 Session 004 浏览器验证 http://127.0.0.1:5174/：防护评估只显示资产筛选，不显示技术编号；资产筛选为 10 个场景域；未配置 LLM 时点击“LLM 增强”显示页面内提示且建议来源保持本地规则库；配置 dummy LLM 后不显示未配置提示并走增强请求失败回退。"
+      ]
+    }
+  ]
+}

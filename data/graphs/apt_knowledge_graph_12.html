@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Seedworm", "label": "Seedworm", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Muddywater", "label": "Muddywater", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Iran\u2019s Ministry of Intelligence and Security", "label": "Iran\u2019s Ministry of Intelligence and Security", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "telecommunications sector", "label": "telecommunications sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Egypt", "label": "Egypt", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Sudan", "label": "Sudan", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Tanzania", "label": "Tanzania", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "MuddyC2Go", "label": "MuddyC2Go", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "SimpleHelp", "label": "SimpleHelp", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Venom Proxy", "label": "Venom Proxy", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "custom keylogger", "label": "custom keylogger", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Revsocks", "label": "Revsocks", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "AnyDesk", "label": "AnyDesk", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "PowerShell", "label": "PowerShell", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Impacket WMIExec", "label": "Impacket WMIExec", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "JumpCloud", "label": "JumpCloud", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Windows Scripting Files", "label": "Windows Scripting Files", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "port scanning", "label": "port scanning", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "LSASS dumping", "label": "LSASS dumping", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "SAM hives", "label": "SAM hives", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "PowerShell launcher", "label": "PowerShell launcher", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "jabswitch.exe", "label": "jabswitch.exe", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "95.164.38.99:443", "label": "95.164.38.99:443", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "45.150.64.39:443", "label": "45.150.64.39:443", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Windows registry", "label": "Windows registry", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "PhonyC2", "label": "PhonyC2", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "Stark Industries", "label": "Stark Industries", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "persistence", "label": "persistence", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "execute_commands_on_host", "label": "execute_commands_on_host", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "146.70.124.102", "label": "146.70.124.102", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Dliv3", "label": "Dliv3", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "multi-hop proxy", "label": "multi-hop proxy", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "SOCKS5 proxy", "label": "SOCKS5 proxy", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "94.131.3.160:443", "label": "94.131.3.160:443", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "remote_access", "label": "remote_access", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd/IOC", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Seedworm", "label": "alias_of", "to": "Muddywater"}, {"arrows": "to", "from": "Seedworm", "label": "part_of", "to": "Iran\u2019s Ministry of Intelligence and Security"}, {"arrows": "to", "from": "Seedworm", "label": "targets", "to": "telecommunications sector"}, {"arrows": "to", "from": "Seedworm", "label": "targets", "to": "Egypt"}, {"arrows": "to", "from": "Seedworm", "label": "targets", "to": "Sudan"}, {"arrows": "to", "from": "Seedworm", "label": "targets", "to": "Tanzania"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "MuddyC2Go"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "SimpleHelp"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "Venom Proxy"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "custom keylogger"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "Revsocks"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "AnyDesk"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "PowerShell"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "Impacket WMIExec"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "JumpCloud"}, {"arrows": "to", "from": "Seedworm", "label": "uses", "to": "Windows Scripting Files"}, {"arrows": "to", "from": "Seedworm", "label": "performs", "to": "port scanning"}, {"arrows": "to", "from": "Seedworm", "label": "performs", "to": "LSASS dumping"}, {"arrows": "to", "from": "Seedworm", "label": "steals", "to": "SAM hives"}, {"arrows": "to", "from": "MuddyC2Go", "label": "delivered_via", "to": "PowerShell launcher"}, {"arrows": "to", "from": "MuddyC2Go", "label": "sideloaded_by", "to": "jabswitch.exe"}, {"arrows": "to", "from": "MuddyC2Go", "label": "communicates_with", "to": "95.164.38.99:443"}, {"arrows": "to", "from": "MuddyC2Go", "label": "communicates_with", "to": "45.150.64.39:443"}, {"arrows": "to", "from": "MuddyC2Go", "label": "reads_file_content", "to": "Windows registry"}, {"arrows": "to", "from": "MuddyC2Go", "label": "replaced", "to": "PhonyC2"}, {"arrows": "to", "from": "MuddyC2Go", "label": "hosted_at", "to": "Stark Industries"}, {"arrows": "to", "from": "SimpleHelp", "label": "used_for", "to": "persistence"}, {"arrows": "to", "from": "SimpleHelp", "label": "used_to", "to": "execute_commands_on_host"}, {"arrows": "to", "from": "SimpleHelp", "label": "communicates_with", "to": "146.70.124.102"}, {"arrows": "to", "from": "Venom Proxy", "label": "developed_by", "to": "Dliv3"}, {"arrows": "to", "from": "Venom Proxy", "label": "used_for", "to": "multi-hop proxy"}, {"arrows": "to", "from": "Revsocks", "label": "used_for", "to": "SOCKS5 proxy"}, {"arrows": "to", "from": "Revsocks", "label": "communicates_with", "to": "94.131.3.160:443"}, {"arrows": "to", "from": "AnyDesk", "label": "used_for", "to": "remote_access"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

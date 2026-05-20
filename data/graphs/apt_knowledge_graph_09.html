@@ -1,0 +1,259 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 100vh;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#99ffff", "font": {"color": "#000000"}, "id": "APT-C-16", "label": "APT-C-16", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "sensitive information", "label": "sensitive information", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "defense departments", "label": "defense departments", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "embassies", "label": "embassies", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "financial institutions", "label": "financial institutions", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "government agencies", "label": "government agencies", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "telecom companies", "label": "telecom companies", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "military sector", "label": "military sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "infrastructure sector", "label": "infrastructure sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "technology research centers", "label": "technology research centers", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Remsec", "label": "Remsec", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Lua modules", "label": "Lua modules", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "custom modules", "label": "custom modules", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "files", "label": "files", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Keylogging (T1056.001)", "label": "Keylogging (T1056.001)", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Lua scripting (T1059.011)", "label": "Lua scripting (T1059.011)", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Windows password filter module", "label": "Windows password filter module", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "plaintext sensitive data", "label": "plaintext sensitive data", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Project Sauron", "label": "Project Sauron", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Strider", "label": "Strider", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Sauron", "label": "Sauron", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "APT-C-39", "label": "APT-C-39", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Fluxwire", "label": "Fluxwire", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Grasshopper", "label": "Grasshopper", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Vault7 tools", "label": "Vault7 tools", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "WISTFULTOOL", "label": "WISTFULTOOL", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Chinese aerospace sector", "label": "Chinese aerospace sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "scientific research institutions in China", "label": "scientific research institutions in China", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "petroleum industry", "label": "petroleum industry", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "major Internet companies", "label": "major Internet companies", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Chinese government agencies", "label": "Chinese government agencies", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "MikroTik router vulnerabilities", "label": "MikroTik router vulnerabilities", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "TinyShell backdoor", "label": "TinyShell backdoor", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Supply Chain Compromise (T1195)", "label": "Supply Chain Compromise (T1195)", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Exploit Public-Facing Application (T1190)", "label": "Exploit Public-Facing Application (T1190)", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Command and Control over HTTPS (T1071.001)", "label": "Command and Control over HTTPS (T1071.001)", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Vault7", "label": "Vault7", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "WikiLeaks", "label": "WikiLeaks", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "CIA", "label": "CIA", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "global cyber warfare", "label": "global cyber warfare", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Athena", "label": "Athena", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "supply chain attacks", "label": "supply chain attacks", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "lightweight backdoor", "label": "lightweight backdoor", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "configurable backdoor", "label": "configurable backdoor", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "espionage operations", "label": "espionage operations", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "AfterMidnight", "label": "AfterMidnight", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "modules via HTTPS", "label": "modules via HTTPS", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Gremlins module", "label": "Gremlins module", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "ChimayRed", "label": "ChimayRed", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "HIVE", "label": "HIVE", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "persistent cyber espionage capability", "label": "persistent cyber espionage capability", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "compromised assets as multi-layer proxies", "label": "compromised assets as multi-layer proxies", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "user data to CIA servers", "label": "user data to CIA servers", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "CIA-supported organization", "label": "CIA-supported organization", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "NSA TAO", "label": "NSA TAO", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "SecondDate", "label": "SecondDate", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Linux-based control systems", "label": "Linux-based control systems", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Northwestern Polytechnical University", "label": "Northwestern Polytechnical University", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "NSA", "label": "NSA", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Razor", "label": "Razor", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Solaris RPC service vulnerabilities", "label": "Solaris RPC service vulnerabilities", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Island", "label": "Island", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Solaris RPC services", "label": "Solaris RPC services", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "AcidFox", "label": "AcidFox", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Internet Explorer", "label": "Internet Explorer", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Firefox", "label": "Firefox", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Safari", "label": "Safari", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "Android WebKit", "label": "Android WebKit", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Validator", "label": "Validator", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "NOPEN", "label": "NOPEN", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "FuriousInjection", "label": "FuriousInjection", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Windows systems", "label": "Windows systems", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CunningOutlaw", "label": "CunningOutlaw", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Exploitation for Privilege Escalation (T1068)", "label": "Exploitation for Privilege Escalation (T1068)", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "StoicSurgeon", "label": "StoicSurgeon", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Linux systems", "label": "Linux systems", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Solaris systems", "label": "Solaris systems", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "JunOS systems", "label": "JunOS systems", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "FreeBSD systems", "label": "FreeBSD systems", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "TeaTime", "label": "TeaTime", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "SSH credentials", "label": "SSH credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Telnet credentials", "label": "Telnet credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Rlogin credentials", "label": "Rlogin credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BehindEnemyLines", "label": "BehindEnemyLines", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "telecom operator systems", "label": "telecom operator systems", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "ToastBread", "label": "ToastBread", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Quantum", "label": "Quantum", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "national-level internet traffic", "label": "national-level internet traffic", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "zero-day vulnerabilities", "label": "zero-day vulnerabilities", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "remote backdoors", "label": "remote backdoors", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "QuantumCookie", "label": "QuantumCookie", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Tor network users", "label": "Tor network users", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "QuantumSquirrel", "label": "QuantumSquirrel", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Mexico Ministry of Public Security", "label": "Mexico Ministry of Public Security", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "foreign militaries", "label": "foreign militaries", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "trade organizations", "label": "trade organizations", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "microchips and USB devices for infiltration", "label": "microchips and USB devices for infiltration", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "Adversary-in-the-Middle (T1557)", "label": "Adversary-in-the-Middle (T1557)", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "APT-C-16", "label": "steals", "to": "sensitive information"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "defense departments"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "embassies"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "financial institutions"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "government agencies"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "telecom companies"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "military sector"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "infrastructure sector"}, {"arrows": "to", "from": "APT-C-16", "label": "targets", "to": "technology research centers"}, {"arrows": "to", "from": "Remsec", "label": "uses", "to": "Lua modules"}, {"arrows": "to", "from": "Remsec", "label": "deploys", "to": "custom modules"}, {"arrows": "to", "from": "Remsec", "label": "steals", "to": "files"}, {"arrows": "to", "from": "Remsec", "label": "uses_technique", "to": "Keylogging (T1056.001)"}, {"arrows": "to", "from": "Remsec", "label": "uses_technique", "to": "Lua scripting (T1059.011)"}, {"arrows": "to", "from": "Windows password filter module", "label": "steals", "to": "plaintext sensitive data"}, {"arrows": "to", "from": "Project Sauron", "label": "alias_of", "to": "APT-C-16"}, {"arrows": "to", "from": "Strider", "label": "alias_of", "to": "APT-C-16"}, {"arrows": "to", "from": "Sauron", "label": "alias_of", "to": "APT-C-16"}, {"arrows": "to", "from": "APT-C-39", "label": "uses", "to": "Fluxwire"}, {"arrows": "to", "from": "APT-C-39", "label": "uses", "to": "Grasshopper"}, {"arrows": "to", "from": "APT-C-39", "label": "uses", "to": "Vault7 tools"}, {"arrows": "to", "from": "APT-C-39", "label": "uses", "to": "WISTFULTOOL"}, {"arrows": "to", "from": "APT-C-39", "label": "targets", "to": "Chinese aerospace sector"}, {"arrows": "to", "from": "APT-C-39", "label": "targets", "to": "scientific research institutions in China"}, {"arrows": "to", "from": "APT-C-39", "label": "targets", "to": "petroleum industry"}, {"arrows": "to", "from": "APT-C-39", "label": "targets", "to": "major Internet companies"}, {"arrows": "to", "from": "APT-C-39", "label": "targets", "to": "Chinese government agencies"}, {"arrows": "to", "from": "APT-C-39", "label": "exploits", "to": "MikroTik router vulnerabilities"}, {"arrows": "to", "from": "APT-C-39", "label": "deploys", "to": "TinyShell backdoor"}, {"arrows": "to", "from": "APT-C-39", "label": "uses_technique", "to": "Supply Chain Compromise (T1195)"}, {"arrows": "to", "from": "APT-C-39", "label": "uses_technique", "to": "Exploit Public-Facing Application (T1190)"}, {"arrows": "to", "from": "APT-C-39", "label": "uses_technique", "to": "Command and Control over HTTPS (T1071.001)"}, {"arrows": "to", "from": "Fluxwire", "label": "part_of", "to": "Vault7"}, {"arrows": "to", "from": "Grasshopper", "label": "part_of", "to": "Vault7"}, {"arrows": "to", "from": "Vault7", "label": "leaked_by", "to": "WikiLeaks"}, {"arrows": "to", "from": "Vault7", "label": "developed_by", "to": "CIA"}, {"arrows": "to", "from": "Vault7", "label": "used_for", "to": "global cyber warfare"}, {"arrows": "to", "from": "Athena", "label": "implanted_through", "to": "supply chain attacks"}, {"arrows": "to", "from": "Athena", "label": "functions_as", "to": "lightweight backdoor"}, {"arrows": "to", "from": "Grasshopper", "label": "functions_as", "to": "configurable backdoor"}, {"arrows": "to", "from": "Grasshopper", "label": "performs", "to": "espionage operations"}, {"arrows": "to", "from": "AfterMidnight", "label": "transmits", "to": "modules via HTTPS"}, {"arrows": "to", "from": "AfterMidnight", "label": "loads_and_executes", "to": "Gremlins module"}, {"arrows": "to", "from": "ChimayRed", "label": "exploits", "to": "MikroTik router vulnerabilities"}, {"arrows": "to", "from": "ChimayRed", "label": "deploys", "to": "TinyShell backdoor"}, {"arrows": "to", "from": "HIVE", "label": "provides", "to": "persistent cyber espionage capability"}, {"arrows": "to", "from": "HIVE", "label": "uses", "to": "compromised assets as multi-layer proxies"}, {"arrows": "to", "from": "HIVE", "label": "transmits", "to": "user data to CIA servers"}, {"arrows": "to", "from": "APT-C-39", "label": "alias_of", "to": "CIA-supported organization"}, {"arrows": "to", "from": "NSA TAO", "label": "uses", "to": "SecondDate"}, {"arrows": "to", "from": "NSA TAO", "label": "uses", "to": "Linux-based control systems"}, {"arrows": "to", "from": "NSA TAO", "label": "targets", "to": "Northwestern Polytechnical University"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "Razor"}, {"arrows": "to", "from": "Razor", "label": "exploits", "to": "Solaris RPC service vulnerabilities"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "Island"}, {"arrows": "to", "from": "Island", "label": "targets", "to": "Solaris RPC services"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "AcidFox"}, {"arrows": "to", "from": "AcidFox", "label": "exploits", "to": "Internet Explorer"}, {"arrows": "to", "from": "AcidFox", "label": "exploits", "to": "Firefox"}, {"arrows": "to", "from": "AcidFox", "label": "exploits", "to": "Safari"}, {"arrows": "to", "from": "AcidFox", "label": "exploits", "to": "Android WebKit"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "Validator"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "NOPEN"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "FuriousInjection"}, {"arrows": "to", "from": "FuriousInjection", "label": "targets", "to": "Windows systems"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "CunningOutlaw"}, {"arrows": "to", "from": "CunningOutlaw", "label": "uses_technique", "to": "Exploitation for Privilege Escalation (T1068)"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "StoicSurgeon"}, {"arrows": "to", "from": "StoicSurgeon", "label": "targets", "to": "Linux systems"}, {"arrows": "to", "from": "StoicSurgeon", "label": "targets", "to": "Solaris systems"}, {"arrows": "to", "from": "StoicSurgeon", "label": "targets", "to": "JunOS systems"}, {"arrows": "to", "from": "StoicSurgeon", "label": "targets", "to": "FreeBSD systems"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "TeaTime"}, {"arrows": "to", "from": "TeaTime", "label": "steals", "to": "SSH credentials"}, {"arrows": "to", "from": "TeaTime", "label": "steals", "to": "Telnet credentials"}, {"arrows": "to", "from": "TeaTime", "label": "steals", "to": "Rlogin credentials"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "BehindEnemyLines"}, {"arrows": "to", "from": "BehindEnemyLines", "label": "targets", "to": "telecom operator systems"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "ToastBread"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "Quantum"}, {"arrows": "to", "from": "Quantum", "label": "hijacks", "to": "national-level internet traffic"}, {"arrows": "to", "from": "Quantum", "label": "exploits", "to": "zero-day vulnerabilities"}, {"arrows": "to", "from": "Quantum", "label": "deploys", "to": "remote backdoors"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "QuantumCookie"}, {"arrows": "to", "from": "QuantumCookie", "label": "targets", "to": "Tor network users"}, {"arrows": "to", "from": "NSA", "label": "uses", "to": "QuantumSquirrel"}, {"arrows": "to", "from": "NSA", "label": "targets", "to": "Mexico Ministry of Public Security"}, {"arrows": "to", "from": "NSA", "label": "targets", "to": "foreign militaries"}, {"arrows": "to", "from": "NSA", "label": "targets", "to": "trade organizations"}, {"arrows": "to", "from": "NSA", "label": "deploys", "to": "microchips and USB devices for infiltration"}, {"arrows": "to", "from": "SecondDate", "label": "uses_technique", "to": "Adversary-in-the-Middle (T1557)"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

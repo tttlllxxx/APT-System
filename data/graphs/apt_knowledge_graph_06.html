@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#ff6666", "font": {"color": "#000000"}, "id": "Lazarus_Group", "label": "Lazarus_Group", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "South_Korean_energy_research", "label": "South_Korean_energy_research", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "nuclear_fuel_supply_chain", "label": "nuclear_fuel_supply_chain", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "NukeSped_backdoor", "label": "NukeSped_backdoor", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "MATA_framework", "label": "MATA_framework", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1105", "label": "T1105", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "long_term_espionage", "label": "long_term_espionage", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "reactor_design_documents", "label": "reactor_design_documents", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "remote_shell_access", "label": "remote_shell_access", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "multi_platform_intrusions", "label": "multi_platform_intrusions", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Kimsuky", "label": "Kimsuky", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "nuclear_energy_think_tanks", "label": "nuclear_energy_think_tanks", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "energy_policy_personnel", "label": "energy_policy_personnel", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BabyShark_malware", "label": "BabyShark_malware", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "AppleSeed_backdoor", "label": "AppleSeed_backdoor", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1059.001", "label": "T1059.001", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "research_briefings", "label": "research_briefings", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "browser_credentials", "label": "browser_credentials", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "SMTPS_channels", "label": "SMTPS_channels", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "FIN12", "label": "FIN12", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "healthcare_energy_mix_companies", "label": "healthcare_energy_mix_companies", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Ryuk_ransomware", "label": "Ryuk_ransomware", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1486", "label": "T1486", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "industrial_maintenance_servers", "label": "industrial_maintenance_servers", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Cuba_Ransomware", "label": "Cuba_Ransomware", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "critical_infrastructure", "label": "critical_infrastructure", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BUGHATCH_loader", "label": "BUGHATCH_loader", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Lazarus_Group", "label": "targets", "to": "South_Korean_energy_research"}, {"arrows": "to", "from": "Lazarus_Group", "label": "targets", "to": "nuclear_fuel_supply_chain"}, {"arrows": "to", "from": "Lazarus_Group", "label": "deploys", "to": "NukeSped_backdoor"}, {"arrows": "to", "from": "Lazarus_Group", "label": "uses", "to": "MATA_framework"}, {"arrows": "to", "from": "Lazarus_Group", "label": "uses_technique", "to": "T1105"}, {"arrows": "to", "from": "Lazarus_Group", "label": "conducts", "to": "long_term_espionage"}, {"arrows": "to", "from": "Lazarus_Group", "label": "steals", "to": "reactor_design_documents"}, {"arrows": "to", "from": "NukeSped_backdoor", "label": "provides", "to": "remote_shell_access"}, {"arrows": "to", "from": "MATA_framework", "label": "supports", "to": "multi_platform_intrusions"}, {"arrows": "to", "from": "Kimsuky", "label": "targets", "to": "nuclear_energy_think_tanks"}, {"arrows": "to", "from": "Kimsuky", "label": "targets", "to": "energy_policy_personnel"}, {"arrows": "to", "from": "Kimsuky", "label": "deploys", "to": "BabyShark_malware"}, {"arrows": "to", "from": "Kimsuky", "label": "deploys", "to": "AppleSeed_backdoor"}, {"arrows": "to", "from": "Kimsuky", "label": "uses_technique", "to": "T1059.001"}, {"arrows": "to", "from": "Kimsuky", "label": "steals", "to": "research_briefings"}, {"arrows": "to", "from": "BabyShark_malware", "label": "collects", "to": "browser_credentials"}, {"arrows": "to", "from": "AppleSeed_backdoor", "label": "communicates_via", "to": "SMTPS_channels"}, {"arrows": "to", "from": "Lazarus_Group", "label": "shares_infrastructure_with", "to": "Kimsuky"}, {"arrows": "to", "from": "Kimsuky", "label": "overlaps_intelligence_targets_with", "to": "Lazarus_Group"}, {"arrows": "to", "from": "FIN12", "label": "targets", "to": "healthcare_energy_mix_companies"}, {"arrows": "to", "from": "FIN12", "label": "deploys", "to": "Ryuk_ransomware"}, {"arrows": "to", "from": "FIN12", "label": "uses_technique", "to": "T1486"}, {"arrows": "to", "from": "Ryuk_ransomware", "label": "encrypts", "to": "industrial_maintenance_servers"}, {"arrows": "to", "from": "Cuba_Ransomware", "label": "targets", "to": "critical_infrastructure"}, {"arrows": "to", "from": "Cuba_Ransomware", "label": "deploys", "to": "BUGHATCH_loader"}, {"arrows": "to", "from": "FIN12", "label": "shares_ransomware_infrastructure_with", "to": "Cuba_Ransomware"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

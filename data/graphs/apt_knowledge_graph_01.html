@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#ff6666", "font": {"color": "#000000"}, "id": "Sandworm", "label": "Sandworm", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "TeleBots", "label": "TeleBots", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Sandworm Team", "label": "Sandworm Team", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Russian GRU", "label": "Russian GRU", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Ukrainian critical infrastructure", "label": "Ukrainian critical infrastructure", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "coordinated_cyber_operations_against_Ukrainian_energy_companies", "label": "coordinated_cyber_operations_against_Ukrainian_energy_companies", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "malicious_remote_operation_of_power_breakers", "label": "malicious_remote_operation_of_power_breakers", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "industrial_control_infrastructure", "label": "industrial_control_infrastructure", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "system_restoration_processes", "label": "system_restoration_processes", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "firmware_of_networked_serial-to-ethernet_devices", "label": "firmware_of_networked_serial-to-ethernet_devices", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "UPS_and_power_management_via_remote_interfaces", "label": "UPS_and_power_management_via_remote_interfaces", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BlackEnergy", "label": "BlackEnergy", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "KillDisk", "label": "KillDisk", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "NotPetya_like_wiper_components", "label": "NotPetya_like_wiper_components", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "OlympicDestroyer_like_components", "label": "OlympicDestroyer_like_components", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1566.001", "label": "T1566.001", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1078", "label": "T1078", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1021", "label": "T1021", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1490", "label": "T1490", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1495", "label": "T1495", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1486", "label": "T1486", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1561.002", "label": "T1561.002", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "BlackEnergy malware", "label": "BlackEnergy malware", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "initial_access_and_disruption", "label": "initial_access_and_disruption", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "spearphishing_emails", "label": "spearphishing_emails", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "KillDisk malware", "label": "KillDisk malware", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "files", "label": "files", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "master_boot_record", "label": "master_boot_record", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "systems_inoperable", "label": "systems_inoperable", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "Windows_HMI_files", "label": "Windows_HMI_files", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "impede_system_restoration", "label": "impede_system_restoration", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "NotPetya", "label": "NotPetya", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "leaked_NSA_tools_including_EternalBlue", "label": "leaked_NSA_tools_including_EternalBlue", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "destructive_wiper_malware", "label": "destructive_wiper_malware", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "ransomware", "label": "ransomware", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "large-scale_disruption_to_multiple_enterprises", "label": "large-scale_disruption_to_multiple_enterprises", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "Merck", "label": "Merck", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "Maersk", "label": "Maersk", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "FedEx", "label": "FedEx", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "victims_hard_drives", "label": "victims_hard_drives", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "OlympicDestroyer", "label": "OlympicDestroyer", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Olympic_domain_controllers", "label": "Olympic_domain_controllers", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Wi-Fi_networks", "label": "Wi-Fi_networks", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "RFID_based_security_gates", "label": "RFID_based_security_gates", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Olympics_official_app", "label": "Olympics_official_app", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "internet-linked_TVs", "label": "internet-linked_TVs", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "system_wide_IT_outage", "label": "system_wide_IT_outage", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "loss_of_access_to_email_and_messaging_services", "label": "loss_of_access_to_email_and_messaging_services", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "initial_access_vector", "label": "initial_access_vector", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Attackers_observed", "label": "Attackers_observed", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "firmware_of_Serial-to-Ethernet_devices", "label": "firmware_of_Serial-to-Ethernet_devices", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "UPS_server_disconnects_via_remote_interface", "label": "UPS_server_disconnects_via_remote_interface", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1561", "label": "T1561", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1494", "label": "T1494", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Sandworm", "label": "alias_of", "to": "TeleBots"}, {"arrows": "to", "from": "Sandworm", "label": "alias_of", "to": "Sandworm Team"}, {"arrows": "to", "from": "Sandworm", "label": "associated_with", "to": "Russian GRU"}, {"arrows": "to", "from": "Sandworm", "label": "targets", "to": "Ukrainian critical infrastructure"}, {"arrows": "to", "from": "Sandworm", "label": "performs", "to": "coordinated_cyber_operations_against_Ukrainian_energy_companies"}, {"arrows": "to", "from": "Sandworm", "label": "conducts", "to": "malicious_remote_operation_of_power_breakers"}, {"arrows": "to", "from": "Sandworm", "label": "manipulates", "to": "industrial_control_infrastructure"}, {"arrows": "to", "from": "Sandworm", "label": "interferes_with", "to": "system_restoration_processes"}, {"arrows": "to", "from": "Sandworm", "label": "corrupts", "to": "firmware_of_networked_serial-to-ethernet_devices"}, {"arrows": "to", "from": "Sandworm", "label": "disrupts", "to": "UPS_and_power_management_via_remote_interfaces"}, {"arrows": "to", "from": "Sandworm", "label": "uses", "to": "BlackEnergy"}, {"arrows": "to", "from": "Sandworm", "label": "uses", "to": "KillDisk"}, {"arrows": "to", "from": "Sandworm", "label": "uses", "to": "NotPetya_like_wiper_components"}, {"arrows": "to", "from": "Sandworm", "label": "uses", "to": "OlympicDestroyer_like_components"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1566.001"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1078"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1021"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1490"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1495"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1486"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1561.002"}, {"arrows": "to", "from": "BlackEnergy", "label": "alias_of", "to": "BlackEnergy malware"}, {"arrows": "to", "from": "BlackEnergy", "label": "used_for", "to": "initial_access_and_disruption"}, {"arrows": "to", "from": "BlackEnergy", "label": "delivered_via", "to": "spearphishing_emails"}, {"arrows": "to", "from": "KillDisk", "label": "alias_of", "to": "KillDisk malware"}, {"arrows": "to", "from": "KillDisk", "label": "erases", "to": "files"}, {"arrows": "to", "from": "KillDisk", "label": "corrupts", "to": "master_boot_record"}, {"arrows": "to", "from": "KillDisk", "label": "renders", "to": "systems_inoperable"}, {"arrows": "to", "from": "KillDisk", "label": "overwrites", "to": "Windows_HMI_files"}, {"arrows": "to", "from": "KillDisk", "label": "used_to", "to": "impede_system_restoration"}, {"arrows": "to", "from": "NotPetya", "label": "linked_to", "to": "Sandworm"}, {"arrows": "to", "from": "NotPetya", "label": "linked_to", "to": "TeleBots"}, {"arrows": "to", "from": "NotPetya", "label": "observed_using", "to": "leaked_NSA_tools_including_EternalBlue"}, {"arrows": "to", "from": "NotPetya", "label": "functions_as", "to": "destructive_wiper_malware"}, {"arrows": "to", "from": "NotPetya", "label": "disguised_as", "to": "ransomware"}, {"arrows": "to", "from": "NotPetya", "label": "caused", "to": "large-scale_disruption_to_multiple_enterprises"}, {"arrows": "to", "from": "NotPetya", "label": "paralyzed", "to": "Merck"}, {"arrows": "to", "from": "NotPetya", "label": "paralyzed", "to": "Maersk"}, {"arrows": "to", "from": "NotPetya", "label": "paralyzed", "to": "FedEx"}, {"arrows": "to", "from": "NotPetya", "label": "permanently_encrypted", "to": "victims_hard_drives"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "disrupts", "to": "Olympic_domain_controllers"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "disrupts", "to": "Wi-Fi_networks"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "disrupts", "to": "RFID_based_security_gates"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "disrupts", "to": "Olympics_official_app"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "disrupts", "to": "internet-linked_TVs"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "causes", "to": "system_wide_IT_outage"}, {"arrows": "to", "from": "OlympicDestroyer", "label": "causes", "to": "loss_of_access_to_email_and_messaging_services"}, {"arrows": "to", "from": "BlackEnergy", "label": "delivered_via", "to": "spearphishing_emails"}, {"arrows": "to", "from": "BlackEnergy", "label": "used_as", "to": "initial_access_vector"}, {"arrows": "to", "from": "Attackers_observed", "label": "corrupted", "to": "firmware_of_Serial-to-Ethernet_devices"}, {"arrows": "to", "from": "Attackers_observed", "label": "scheduled", "to": "UPS_server_disconnects_via_remote_interface"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1561"}, {"arrows": "to", "from": "Sandworm", "label": "uses_technique", "to": "T1494"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

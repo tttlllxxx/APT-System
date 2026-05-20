@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#ff6666", "font": {"color": "#000000"}, "id": "ELECTRUM", "label": "ELECTRUM", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Polish power grid", "label": "Polish power grid", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "distributed energy resources", "label": "distributed energy resources", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "combined heat and power facilities", "label": "combined heat and power facilities", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "wind energy sites", "label": "wind energy sites", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "solar energy sites", "label": "solar energy sites", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Remote Terminal Units", "label": "Remote Terminal Units", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "communication infrastructure", "label": "communication infrastructure", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "operational technology systems", "label": "operational technology systems", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "communications equipment", "label": "communications equipment", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "OT devices", "label": "OT devices", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "wiper malware", "label": "wiper malware", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "vulnerabilities", "label": "vulnerabilities", "shape": "dot"}, {"color": "#ff9966", "font": {"color": "#000000"}, "id": "misconfigurations", "label": "misconfigurations", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Sandworm", "label": "Sandworm", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "KAMACITE", "label": "KAMACITE", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CaddyWiper", "label": "CaddyWiper", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Industroyer2", "label": "Industroyer2", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CRASHOVERRIDE", "label": "CRASHOVERRIDE", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "living-off-the-land scripts", "label": "living-off-the-land scripts", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "IEC 104", "label": "IEC 104", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "IEC 101", "label": "IEC 101", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "IEC 61850", "label": "IEC 61850", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "OPC DA", "label": "OPC DA", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "wiper module", "label": "wiper module", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "KA-SAT satellite network", "label": "KA-SAT satellite network", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "exposed network devices", "label": "exposed network devices", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "reconnaissance", "label": "reconnaissance", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "cyberattack", "label": "cyberattack", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "2015 Ukraine power grid attack", "label": "2015 Ukraine power grid attack", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "2016 Ukraine power grid attack", "label": "2016 Ukraine power grid attack", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "December 2025 Poland attack", "label": "December 2025 Poland attack", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd/IOC", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "Polish power grid"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "distributed energy resources"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "combined heat and power facilities"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "wind energy sites"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "solar energy sites"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "Remote Terminal Units"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "communication infrastructure"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "operational technology systems"}, {"arrows": "to", "from": "ELECTRUM", "label": "disables", "to": "communications equipment"}, {"arrows": "to", "from": "ELECTRUM", "label": "disables", "to": "OT devices"}, {"arrows": "to", "from": "ELECTRUM", "label": "uses", "to": "wiper malware"}, {"arrows": "to", "from": "ELECTRUM", "label": "exploits", "to": "vulnerabilities"}, {"arrows": "to", "from": "ELECTRUM", "label": "exploits", "to": "misconfigurations"}, {"arrows": "to", "from": "ELECTRUM", "label": "alias_of", "to": "Sandworm"}, {"arrows": "to", "from": "ELECTRUM", "label": "associated_with", "to": "KAMACITE"}, {"arrows": "to", "from": "ELECTRUM", "label": "uses", "to": "CaddyWiper"}, {"arrows": "to", "from": "ELECTRUM", "label": "uses", "to": "Industroyer2"}, {"arrows": "to", "from": "ELECTRUM", "label": "uses", "to": "CRASHOVERRIDE"}, {"arrows": "to", "from": "ELECTRUM", "label": "uses", "to": "living-off-the-land scripts"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "uses_protocol", "to": "IEC 104"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "uses_protocol", "to": "IEC 101"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "uses_protocol", "to": "IEC 61850"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "uses_protocol", "to": "OPC DA"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "has_module", "to": "wiper module"}, {"arrows": "to", "from": "ELECTRUM", "label": "targets", "to": "KA-SAT satellite network"}, {"arrows": "to", "from": "ELECTRUM", "label": "deployed_via", "to": "exposed network devices"}, {"arrows": "to", "from": "ELECTRUM", "label": "conducts", "to": "reconnaissance"}, {"arrows": "to", "from": "ELECTRUM", "label": "performs", "to": "cyberattack"}, {"arrows": "to", "from": "ELECTRUM", "label": "responsible_for", "to": "2015 Ukraine power grid attack"}, {"arrows": "to", "from": "ELECTRUM", "label": "responsible_for", "to": "2016 Ukraine power grid attack"}, {"arrows": "to", "from": "ELECTRUM", "label": "responsible_for", "to": "December 2025 Poland attack"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

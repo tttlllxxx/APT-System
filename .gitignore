@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+.*.swp
+.venv/
+frontend/node_modules/
+frontend/dist/
+data/apt_system.sqlite3
+__pycache__/
+*.pyc

@@ -1,0 +1,1402 @@
+[
+  {
+    "id": "APT-SCRIPT-ELEC-0401",
+    "target": "电网主站调度服务器",
+    "scenario": "攻击者利用调度系统的弱口令登录主站后台，篡改潮流计算参数。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "服务扫描", "description": "收集主站运行端口与版本信息"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "默认凭据", "description": "使用弱口令登录系统后台"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据篡改", "description": "修改潮流计算数据库中的模型参数"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "注册表启动项", "description": "植入持久脚本维持访问"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " WebSocket", "description": "与外部控制端保持交互"},
+      {"stage": "影响", "technique": "T0827", "tool": "过程数据操控", "description": "潮流计算结果失真导致错误调度"}
+    ],
+    "impact": "可能引发调度错误，电网稳定性受威胁"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0402",
+    "target": "变电站自动化系统",
+    "scenario": "攻击者通过漏洞利用接入变电站局域网，篡改遥控命令。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "协议嗅探", "description": "分析 IEC 60870-5-104 报文结构"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "远程代码执行", "description": "利用站控系统 Web 服务漏洞进入内网"},
+      {"stage": "执行", "technique": "T0851", "tool": "命令伪造", "description": "构造开关合分操作指令"},
+      {"stage": "持久化", "technique": "T1053.005", "tool": "计划任务", "description": "设置恶意脚本定期触发"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密信道", "description": "通过 TLS 隧道隐藏控制指令"},
+      {"stage": "影响", "technique": "T0809", "tool": "过程操控", "description": "变电站开关误动作引发供电中断"}
+    ],
+    "impact": "区域停电风险，保护动作失效"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0403",
+    "target": "电力地理信息系统 (GIS)",
+    "scenario": "攻击者入侵 GIS 系统，窃取电网资产与线路拓扑数据。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "目录遍历", "description": "探测 GIS 系统文件目录结构"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "第三方账号滥用", "description": "通过承包商账号进入 GIS 系统"},
+      {"stage": "执行", "technique": "T1005", "tool": "数据导出", "description": "批量导出线路、设备、地理位置信息"},
+      {"stage": "持久化", "technique": "T1098.002", "tool": "账户权限维持", "description": "为自己新增高权限账号"},
+      {"stage": "C2", "technique": "T1071.004", "tool": " DNS 隧道", "description": "分片传输敏感数据"},
+      {"stage": "影响", "technique": "T0835", "tool": "情报泄露", "description": "电网关键设施布局暴露"}
+    ],
+    "impact": "电力设施防护信息泄露，提升敌对方攻击成功率"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0404",
+    "target": "配电自动化终端 (FTU)",
+    "scenario": "攻击者通过无线维护通道植入恶意固件。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "无线接口扫描", "description": "识别 FTU 使用的 4G/5G 通信模块"},
+      {"stage": "初始访问", "technique": "T1195.002", "tool": "供应链攻击", "description": "通过恶意固件更新包植入后门"},
+      {"stage": "执行", "technique": "T1542.001", "tool": "系统引导篡改", "description": "替换启动固件加载恶意逻辑"},
+      {"stage": "持久化", "technique": "T1053.005", "tool": "定时任务", "description": "定期检查后门运行状态"},
+      {"stage": "C2", "technique": "T1090", "tool": "代理隧道", "description": "通过 IoT 网络中继通信"},
+      {"stage": "影响", "technique": "T0828", "tool": "保护逻辑篡改", "description": "导致分布式自动化动作异常"}
+    ],
+    "impact": "配电网自愈功能失效，事故范围扩大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0405",
+    "target": "电力数据采集平台",
+    "scenario": "攻击者注入恶意 SQL 语句篡改历史负荷数据。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库指纹识别", "description": "识别数据库类型与版本"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "SQL 注入", "description": "利用 Web 查询接口漏洞执行 SQL"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据修改", "description": "篡改负荷历史曲线数据"},
+      {"stage": "持久化", "technique": "T1546.002", "tool": "触发器注入", "description": "数据库触发器维持持续篡改"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " HTTP API", "description": "外部同步被篡改的结果"},
+      {"stage": "影响", "technique": "T0829", "tool": "分析误导", "description": "调度中心错误判断用电趋势"}
+    ],
+    "impact": "负荷预测失真，影响电网调度策略"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0406",
+    "target": "调度自动化前置机",
+    "scenario": "攻击者在前置机中植入恶意模块，篡改上下行遥测数据。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "流量抓取", "description": "分析前置机与主站的报文格式"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "服务漏洞利用", "description": "利用前置服务缓冲区溢出进入系统"},
+      {"stage": "执行", "technique": "T1005", "tool": "数据篡改模块", "description": "注入 DLL 改写采集数据"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "启动项注册", "description": "在系统启动时加载恶意模块"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTP 隧道", "description": "周期性上报运行状态"},
+      {"stage": "影响", "technique": "T0829", "tool": "采集数据误导", "description": "遥测数值被篡改导致监控错误"}
+    ],
+    "impact": "调度中心误判电网状态，可能引发错误操作"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0407",
+    "target": "继电保护装置",
+    "scenario": "攻击者通过远程维护口篡改保护定值。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "装置探测", "description": "收集继保型号与定值表版本"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "默认维护账号", "description": "利用出厂默认账号进入设备"},
+      {"stage": "执行", "technique": "T0851", "tool": "定值修改", "description": "修改过流保护门槛"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "固件修改", "description": "在固件中嵌入篡改逻辑"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密下发", "description": "远程推送新的恶意定值表"},
+      {"stage": "影响", "technique": "T0836", "tool": "保护失效", "description": "故障无法切除，扩大事故范围"}
+    ],
+    "impact": "继电保护功能丧失，电力系统稳定性严重下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0408",
+    "target": "电厂 DCS 控制网络",
+    "scenario": "攻击者通过水坑攻击植入恶意 DLL，破坏锅炉调节。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "水坑监控", "description": "收集常用工程软件下载站"},
+      {"stage": "初始访问", "technique": "T1189", "tool": "水坑攻击", "description": "修改下载包携带恶意 DLL"},
+      {"stage": "执行", "technique": "T1055.001", "tool": "DLL 注入", "description": "注入调节进程拦截控制逻辑"},
+      {"stage": "持久化", "technique": "T1546.001", "tool": "开机自启服务", "description": "创建恶意服务随系统启动"},
+      {"stage": "C2", "technique": "T1071.002", "tool": "SMTP 通信", "description": "通过伪装邮件通道传输数据"},
+      {"stage": "影响", "technique": "T0809", "tool": "过程操控", "description": "锅炉燃烧异常导致停机"}
+    ],
+    "impact": "发电机组出力丧失，电网供电能力下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0409",
+    "target": "电能质量监测系统",
+    "scenario": "攻击者篡改监测报表，掩盖电能质量问题。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库探测", "description": "识别存储监测数据的数据库"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "滥用服务账号", "description": "使用弱密码服务账号进入"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "日志篡改", "description": "删除或修改电压闪变数据"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "数据库存储过程", "description": "植入自动执行的存储过程"},
+      {"stage": "C2", "technique": "T1090.002", "tool": "SOCKS 代理", "description": "通过代理通道导出结果"},
+      {"stage": "影响", "technique": "T0829", "tool": "监测失真", "description": "电能质量问题无法被发现"}
+    ],
+    "impact": "长期运行损坏设备，增加停电风险"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0410",
+    "target": "电力交易平台",
+    "scenario": "攻击者操纵报价数据，扰乱市场价格。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "API 接口收集", "description": "分析交易系统接口文档"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "Web 注入漏洞", "description": "在交易提交接口注入恶意脚本"},
+      {"stage": "执行", "technique": "T1059.007", "tool": "JavaScript 注入", "description": "篡改报价请求数据"},
+      {"stage": "持久化", "technique": "T1505.003", "tool": "Web 模块劫持", "description": "在交易平台加载恶意插件"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 通信", "description": "实时下发操控指令"},
+      {"stage": "影响", "technique": "T0829", "tool": "市场操纵", "description": "电价异常波动，扰乱市场秩序"}
+    ],
+    "impact": "市场交易失真，造成巨额经济损失"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0411",
+    "target": "SCADA 监控大屏",
+    "scenario": "攻击者修改显示数据，误导调度员。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "接口嗅探", "description": "获取大屏与 SCADA 交互协议"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "默认账号", "description": "登录大屏管理后台"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据篡改", "description": "修改电压、潮流显示"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "显示服务挂钩", "description": "挂接渲染模块持久化"},
+      {"stage": "C2", "technique": "T1001.003", "tool": "分块加密数据", "description": "隐藏数据通道传出"},
+      {"stage": "影响", "technique": "T0831", "tool": "感知误导", "description": "调度员错误判断电网状态"}
+    ],
+    "impact": "人为错误操作，可能触发区域性停电"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0412",
+    "target": "新能源并网监控系统",
+    "scenario": "攻击者利用未授权接口，关闭部分风电场并网点。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "接口扫描", "description": "扫描并网控制 API"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "接口越权", "description": "直接调用 API 执行非法关闭"},
+      {"stage": "执行", "technique": "T0851", "tool": "远程命令注入", "description": "关闭风电场并网点"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置篡改", "description": "写入默认下线配置"},
+      {"stage": "C2", "technique": "T1573", "tool": "TLS 隧道", "description": "实时控制更多并网点"},
+      {"stage": "影响", "technique": "T0828", "tool": "电源中断", "description": "新能源出力骤降，电网频率波动"}
+    ],
+    "impact": "大规模新能源机组脱网，电网失衡"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0413",
+    "target": "电动汽车充电桩管理系统",
+    "scenario": "攻击者劫持充电桩，制造虚假计费。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库探测", "description": "收集充电订单数据表"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "弱口令", "description": "使用默认账户进入后台"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据伪造", "description": "伪造充电时长与费用"},
+      {"stage": "持久化", "technique": "T1505.003", "tool": "应用插件", "description": "后台加载伪造数据模块"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS API", "description": "推送虚假账单"},
+      {"stage": "影响", "technique": "T0834", "tool": "经济损失", "description": "运营方财务数据被篡改"}
+    ],
+    "impact": "造成经济损失，用户信任度下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0414",
+    "target": "电力移动运维平台",
+    "scenario": "攻击者窃取运维人员位置信息和操作日志。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "API 枚举", "description": "识别移动运维接口"},
+      {"stage": "初始访问", "technique": "T1566.002", "tool": "钓鱼短信", "description": "诱导下载恶意 App"},
+      {"stage": "执行", "technique": "T1646", "tool": "信息抓取", "description": "窃取 GPS 定位与操作记录"},
+      {"stage": "持久化", "technique": "T1516", "tool": "后台常驻服务", "description": "恶意 App 自启动"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 上传", "description": "定时回传敏感数据"},
+      {"stage": "影响", "technique": "T0835", "tool": "人员行动暴露", "description": "运维计划被对手掌握"}
+    ],
+    "impact": "关键运维流程泄露，增加破坏风险"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0415",
+    "target": "电网调度语音系统",
+    "scenario": "攻击者入侵 VoIP 平台，监听调度员通话。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "SIP 扫描", "description": "探测语音服务器与分机号"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "弱口令登录", "description": "进入 VoIP 管理后台"},
+      {"stage": "执行", "technique": "T1123", "tool": "音频捕获", "description": "录制实时语音通话"},
+      {"stage": "持久化", "technique": "T1505.003", "tool": "语音模块篡改", "description": "挂接录音插件"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTP 上传", "description": "定期传送录音文件"},
+      {"stage": "影响", "technique": "T0835", "tool": "情报泄露", "description": "调度计划提前暴露"}
+    ],
+    "impact": "通信安全受损，调度命令可能被拦截"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0416",
+    "target": "电厂燃料供应系统",
+    "scenario": "攻击者篡改燃煤库存与消耗记录。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库结构分析", "description": "识别燃料管理数据表"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "承包商账号", "description": "滥用外包商账户访问系统"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据篡改", "description": "伪造燃料入库量"},
+      {"stage": "持久化", "technique": "T1546.002", "tool": "数据库触发器", "description": "隐藏伪造痕迹"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "Web 接口", "description": "同步伪造库存数据"},
+      {"stage": "影响", "technique": "T0834", "tool": "财务损失", "description": "燃料消耗与真实情况严重偏差"}
+    ],
+    "impact": "燃料管理混乱，可能导致机组停机"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0417",
+    "target": "水电站闸门控制系统",
+    "scenario": "攻击者远程篡改闸门开度，干扰水库调节。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "工业协议探测", "description": "收集 Modbus/TCP 指令"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "远程漏洞利用", "description": "利用控制软件溢出漏洞"},
+      {"stage": "执行", "technique": "T0859", "tool": "命令注入", "description": "发送非法闸门开度指令"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置修改", "description": "将恶意命令写入策略文件"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密通道", "description": "外部远程下发指令"},
+      {"stage": "影响", "technique": "T0828", "tool": "水位调控破坏", "description": "水库蓄水异常，可能引发洪灾"}
+    ],
+    "impact": "水电运行失控，造成重大安全隐患"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0418",
+    "target": "火电厂汽轮机监控系统",
+    "scenario": "攻击者劫持监控信号，掩盖轴承温度升高。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "信号嗅探", "description": "捕获 OPC UA 报文"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "弱口令", "description": "通过工程师账号登录系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "信号伪造", "description": "篡改温度测点数值"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "驱动挂钩", "description": "持续篡改传感器数据"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTP 隧道", "description": "向外部实时汇报劫持情况"},
+      {"stage": "影响", "technique": "T0828", "tool": "监测失效", "description": "设备异常未被发现，可能引发爆炸"}
+    ],
+    "impact": "造成重大设备损毁和停机事故"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0419",
+    "target": "电力视频监控系统",
+    "scenario": "攻击者篡改变电站摄像头画面，掩盖物理入侵。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "摄像头探测", "description": "获取 RTSP 视频流地址"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "默认口令", "description": "进入视频管理后台"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "视频篡改", "description": "替换为历史画面"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "注册表启动项", "description": "恶意模块随服务启动"},
+      {"stage": "C2", "technique": "T1090", "tool": "代理", "description": "通过代理上传控制命令"},
+      {"stage": "影响", "technique": "T0831", "tool": "安全感知误导", "description": "物理入侵无法被发现"}
+    ],
+    "impact": "物理安全防护失效，风险扩大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0420",
+    "target": "电力大数据中心",
+    "scenario": "攻击者窃取电网运行大数据并出售。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库探测", "description": "定位 Hadoop 集群元数据"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "未授权访问", "description": "利用 YARN 管理接口漏洞进入"},
+      {"stage": "执行", "technique": "T1005", "tool": "数据导出", "description": "批量打包运行日志与潮流数据"},
+      {"stage": "持久化", "technique": "T1098", "tool": "新增账号", "description": "在集群中添加后门账号"},
+      {"stage": "C2", "technique": "T1071.004", "tool": "DNS 隧道", "description": "将数据切片传出"},
+      {"stage": "影响", "technique": "T0835", "tool": "情报泄露", "description": "电网全局运行情况外泄"}
+    ],
+    "impact": "战略级运行信息被敌对方掌握"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0421",
+    "target": "电力远程维护 VPN",
+    "scenario": "攻击者通过 VPN 凭证窃取进入调度网。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "凭证收集", "description": "窃取承包商 VPN 账号"},
+      {"stage": "初始访问", "technique": "T1078.004", "tool": "VPN 登录", "description": "使用被盗凭证接入内网"},
+      {"stage": "执行", "technique": "T1059.003", "tool": "命令执行", "description": "在跳板机执行系统命令"},
+      {"stage": "持久化", "technique": "T1547.009", "tool": "服务注册", "description": "植入恶意服务维持访问"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密隧道", "description": "通过加密通道控制内网"},
+      {"stage": "影响", "technique": "T0829", "tool": "横向渗透", "description": "进一步扩展攻击面"}
+    ],
+    "impact": "调度网安全边界失效，系统全局受威胁"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0422",
+    "target": "配电 SCADA 无线通信链路",
+    "scenario": "攻击者干扰 4G/5G 通道，导致数据丢失。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "无线频谱探测", "description": "确定基站与终端通信频段"},
+      {"stage": "初始访问", "technique": "T1498", "tool": "无线干扰", "description": "发射强干扰信号阻断通信"},
+      {"stage": "执行", "technique": "T1499", "tool": "拒绝服务", "description": "持续阻断数据传输"},
+      {"stage": "持久化", "technique": "T1489", "tool": "通信中断维持", "description": "定时发射干扰脉冲"},
+      {"stage": "C2", "technique": "T1008", "tool": "备用信道", "description": "攻击端切换备用频段控制"},
+      {"stage": "影响", "technique": "T0827", "tool": "监测失效", "description": "终端无法上传监控数据"}
+    ],
+    "impact": "配电监测中断，调度失灵"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0423",
+    "target": "电力防火墙设备",
+    "scenario": "攻击者利用 0day 提权绕过安全策略。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "固件分析", "description": "逆向防火墙固件寻找漏洞"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "远程漏洞利用", "description": "利用 0day 提权获取 root"},
+      {"stage": "执行", "technique": "T1059.004", "tool": "Shell 脚本", "description": "执行命令关闭安全策略"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "引导修改", "description": "在启动过程中加载后门"},
+      {"stage": "C2", "technique": "T1090.001", "tool": "多层代理", "description": "通过多级代理隐藏控制"},
+      {"stage": "影响", "technique": "T0836", "tool": "防护绕过", "description": "整个调度网暴露于外部"}
+    ],
+    "impact": "边界防护失效，黑客可直接进入内网"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0424",
+    "target": "电力应急指挥系统",
+    "scenario": "攻击者阻断应急调度信息传输。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "网络映射", "description": "收集应急指挥系统网络结构"},
+      {"stage": "初始访问", "technique": "T1489", "tool": "网络阻断", "description": "关闭关键交换机端口"},
+      {"stage": "执行", "technique": "T1499", "tool": "拒绝服务", "description": "持续发起网络泛洪攻击"},
+      {"stage": "持久化", "technique": "T1565.003", "tool": "配置篡改", "description": "篡改路由表造成黑洞路由"},
+      {"stage": "C2", "technique": "T1090", "tool": "隧道代理", "description": "隐藏攻击流量来源"},
+      {"stage": "影响", "technique": "T0828", "tool": "应急通信中断", "description": "应急调度失效"}
+    ],
+    "impact": "灾害应对失灵，事故损失扩大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0425",
+    "target": "电力人事管理系统",
+    "scenario": "攻击者窃取员工信息用于后续钓鱼攻击。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库探测", "description": "收集员工花名册表"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "SQL 注入", "description": "利用漏洞获取数据库访问"},
+      {"stage": "执行", "technique": "T1005", "tool": "数据导出", "description": "下载员工联系方式"},
+      {"stage": "持久化", "technique": "T1098.002", "tool": "新增管理员", "description": "创建高权限账号"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS API", "description": "传送数据到外部"},
+      {"stage": "影响", "technique": "T0835", "tool": "信息泄露", "description": "员工资料泄露被用于钓鱼"}
+    ],
+    "impact": "增加社工攻击成功率，电网整体安全受威胁"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0426",
+    "target": "电力地调二次设备管理系统",
+    "scenario": "攻击者篡改设备台账数据，掩盖后门装置。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库查询", "description": "收集设备台账"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "默认账号", "description": "登录后台管理系统"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据篡改", "description": "删除或修改异常设备记录"},
+      {"stage": "持久化", "technique": "T1546.002", "tool": "触发器", "description": "持续篡改台账更新"},
+      {"stage": "C2", "technique": "T1071.004", "tool": "DNS 隧道", "description": "传输修改痕迹"},
+      {"stage": "影响", "technique": "T0829", "tool": "资产记录失真", "description": "后门设备长期潜伏"}
+    ],
+    "impact": "二次系统可信度丧失，攻击潜伏更隐蔽"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0427",
+    "target": "电力调度历史数据库",
+    "scenario": "攻击者删除历史操作记录，掩盖渗透路径。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库结构识别", "description": "定位历史操作日志表"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "窃取凭证", "description": "使用调度员凭证登录"},
+      {"stage": "执行", "technique": "T1070.002", "tool": "日志清除", "description": "删除特定时间段操作记录"},
+      {"stage": "持久化", "technique": "T1546.002", "tool": "SQL 触发器", "description": "拦截后续日志写入"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 控制", "description": "上传删除进度及日志副本"},
+      {"stage": "影响", "technique": "T0834", "tool": "取证阻断", "description": "入侵轨迹难以还原"}
+    ],
+    "impact": "关键取证线索丢失，溯源难度大大增加"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0428",
+    "target": "配电自动化主站系统",
+    "scenario": "攻击者篡改遥控权限配置，使非法终端具备控制能力。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "网络监听", "description": "收集终端授权配置下发流程"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "授权逻辑漏洞", "description": "利用接口绕过终端校验"},
+      {"stage": "执行", "technique": "T0851", "tool": "配置注入", "description": "写入非法终端 ID 并赋权"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置固化", "description": "将配置写入数据库持久保存"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "REST API 控制", "description": "远程下发遥控指令"},
+      {"stage": "影响", "technique": "T0833", "tool": "越权控制", "description": "非法终端可直接控制断路器"}
+    ],
+    "impact": "造成越权遥控，配电网存在误操作风险"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0429",
+    "target": "电网气象预警系统",
+    "scenario": "攻击者篡改气象模型参数，误导灾害预警。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "模型结构分析", "description": "分析模型输入和预测参数"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "测试账号", "description": "使用测试环境账户登录系统"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "参数篡改", "description": "修改温湿风等阈值参数"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "模型脚本注入", "description": "更改训练与推理脚本"},
+      {"stage": "C2", "technique": "T1571", "tool": "应用层回传", "description": "回传模型运行状态与影响程度"},
+      {"stage": "影响", "technique": "T0831", "tool": "预警误导", "description": "极端天气未被及时预警"}
+    ],
+    "impact": "电力运维未做准备，可能造成大面积跳闸"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0430",
+    "target": "电力数字化交互平台",
+    "scenario": "攻击者伪造用户身份散布错误调度指令。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1589", "tool": "社交工程", "description": "收集调度员社交行为与语气特点"},
+      {"stage": "初始访问", "technique": "T1566.001", "tool": "鱼叉钓鱼", "description": "伪装调度长发送虚假指令链接"},
+      {"stage": "执行", "technique": "T1059.007", "tool": "脚本执行", "description": "通过浏览器执行调度平台接口调用"},
+      {"stage": "持久化", "technique": "T1546.003", "tool": "前端脚本注入", "description": "篡改 Web 页面用于下次诱导"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "WebSocket", "description": "实时指令回传与修正"},
+      {"stage": "影响", "technique": "T0831", "tool": "调度指令混淆", "description": "现场人员混淆执行操作"}
+    ],
+    "impact": "出现调度口令混乱，严重时影响电网稳定"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0431",
+    "target": "变电站智能终端设备",
+    "scenario": "攻击者远程刷写恶意固件，实现断路器反复跳闸。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "固件版本探测", "description": "抓取设备升级流程与固件签名方式"},
+      {"stage": "初始访问", "technique": "T1195.002", "tool": "设备维护口接入", "description": "通过维护通道远程登录设备"},
+      {"stage": "执行", "technique": "T1601.001", "tool": "恶意固件注入", "description": "写入控制逻辑触发跳闸"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "固件自启动", "description": "设备启动后自动加载恶意固件"},
+      {"stage": "C2", "technique": "T1573.002", "tool": "VPN 隧道控制", "description": "通过 VPN 加密控制终端"},
+      {"stage": "影响", "technique": "T0859", "tool": "电气操控", "description": "造成反复跳闸影响供电"}
+    ],
+    "impact": "区域电压波动严重，可能引发连锁跳闸"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0432",
+    "target": "电网图纸管理平台",
+    "scenario": "攻击者窃取与篡改变电站一次接线图。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "文件结构识别", "description": "分析平台中图纸命名与组织结构"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "内部用户账号", "description": "使用授权账号登录文档平台"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "文件篡改", "description": "对图纸线路标注进行精细篡改"},
+      {"stage": "持久化", "technique": "T1020.001", "tool": "同步驱动", "description": "通过自动同步更新图纸"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS", "description": "传输图纸与修改记录"},
+      {"stage": "影响", "technique": "T0829", "tool": "误导施工", "description": "造成误接线风险"}
+    ],
+    "impact": "导致实际接线与图纸不符，引发设备故障"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0433",
+    "target": "电力应急演练系统",
+    "scenario": "攻击者破坏演练脚本与预案数据库，干扰应急培训。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "平台探测", "description": "分析应急平台演练流程"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "接口漏洞", "description": "通过管理接口绕过认证"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "脚本删除", "description": "删除演练剧本与评分逻辑"},
+      {"stage": "持久化", "technique": "T1505.003", "tool": "后台插件", "description": "添加恶意脚本用于干扰后续演练"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 控制", "description": "实时操控演练流程"},
+      {"stage": "影响", "technique": "T0828", "tool": "训练失效", "description": "导致应急响应能力下降"}
+    ],
+    "impact": "调度与运维人员应急能力下降，事故应对延迟"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0434",
+    "target": "电力合同管理系统",
+    "scenario": "攻击者伪造购电合同，骗取结算资金。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库分析", "description": "获取合同编号和模板结构"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "承包商访问权", "description": "利用外包公司账户进入系统"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "文档伪造", "description": "创建虚假合同文件并提交审核"},
+      {"stage": "持久化", "technique": "T1098.001", "tool": "权限维持", "description": "维持高级账户以便反复提交"},
+      {"stage": "C2", "technique": "T1571", "tool": "应用接口通道", "description": "远程操控合同提交与审批"},
+      {"stage": "影响", "technique": "T0834", "tool": "资金盗取", "description": "冒领购电资金造成财务损失"}
+    ],
+    "impact": "公司财务风险暴露，合同体系可信度下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0435",
+    "target": "储能电站管理系统",
+    "scenario": "攻击者操控储能系统充放电节奏，破坏电网平衡。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "调度接口探测", "description": "识别储能控制下发通道"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "API 漏洞", "description": "绕过鉴权访问调度接口"},
+      {"stage": "执行", "technique": "T0851", "tool": "非法调度", "description": "异常高频充放电指令下发"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "脚本注入", "description": "持续向调度平台注入非法请求"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密通道", "description": "实时远程控制策略执行"},
+      {"stage": "影响", "technique": "T0828", "tool": "频率扰动", "description": "扰乱区域电网功率平衡"}
+    ],
+    "impact": "电网频率剧烈波动，甚至引发黑启动"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0436",
+    "target": "风电场监控系统",
+    "scenario": "攻击者控制桨距系统使风机频繁停机。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "协议嗅探", "description": "收集 PLC 与控制中心通信协议"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "控制器漏洞", "description": "利用固件漏洞控制桨距模块"},
+      {"stage": "执行", "technique": "T0851", "tool": "控制信号注入", "description": "频繁调整桨距角造成保护动作"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "参数篡改", "description": "配置不合理参数触发停机"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "Web 控制台", "description": "通过控制台持续操控桨距"},
+      {"stage": "影响", "technique": "T0829", "tool": "发电中断", "description": "风机频繁退出并网影响出力"}
+    ],
+    "impact": "风电并网稳定性下降，损失可观"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0437",
+    "target": "核电站非安全级局域网",
+    "scenario": "攻击者植入间谍软件窃取运行数据。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "拓扑分析", "description": "识别非安全级网络拓扑结构"},
+      {"stage": "初始访问", "technique": "T1566.001", "tool": "钓鱼邮件", "description": "发送携带木马文档诱导打开"},
+      {"stage": "执行", "technique": "T1055", "tool": "进程注入", "description": "注入运行监控软件"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "启动项修改", "description": "每次开机自动运行"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 加密", "description": "每日定时回传采集数据"},
+      {"stage": "影响", "technique": "T0835", "tool": "情报泄露", "description": "核电运行敏感数据外泄"}
+    ],
+    "impact": "泄露国家关键基础设施运行状态"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0438",
+    "target": "电力在线培训系统",
+    "scenario": "攻击者利用课件接口上传木马感染终端。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "接口分析", "description": "识别课件上传功能及格式限制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "文件解析漏洞", "description": "上传带木马的课件伪装为 PPT"},
+      {"stage": "执行", "technique": "T1204.002", "tool": "恶意文档执行", "description": "用户浏览课件时中招"},
+      {"stage": "持久化", "technique": "T1546.001", "tool": "Office 宏植入", "description": "开启文档即自动运行"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "WebSocket", "description": "获取终端控制权限"},
+      {"stage": "影响", "technique": "T0858", "tool": "终端控制", "description": "办公终端沦陷可用作跳板"}
+    ],
+    "impact": "办公网络安全边界失守，APT 后续渗透加剧"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0439",
+    "target": "输电线路无人机巡检平台",
+    "scenario": "攻击者操控无人机获取敏感图像。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "接口嗅探", "description": "分析无人机控制与影像回传协议"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "未授权 API", "description": "绕过校验接入无人机控制系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "飞行任务注入", "description": "下发伪装的巡检任务"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "脚本自动化", "description": "定时向控制中心上传影像"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 通道", "description": "远程实时回传图像数据"},
+      {"stage": "影响", "technique": "T0835", "tool": "敏感设施曝光", "description": "输电关键通道图像外泄"}
+    ],
+    "impact": "泄露电网核心地理位置信息，危及国家能源安全"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0440",
+    "target": "电力边缘计算节点",
+    "scenario": "攻击者利用 MEC 节点作为跳板渗透控制中心。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "边缘节点探测", "description": "识别电网部署的边缘计算位置与功能"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "容器逃逸", "description": "通过容器漏洞进入宿主系统"},
+      {"stage": "执行", "technique": "T1059.006", "tool": "脚本执行", "description": "下载并运行横向扫描工具"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "系统服务注入", "description": "利用 systemd 保持长期驻留"},
+      {"stage": "C2", "technique": "T1573.001", "tool": "加密通道", "description": "通过加密 VPN 与主控通信"},
+      {"stage": "影响", "technique": "T0842", "tool": "横向渗透", "description": "逐级跳板直达控制层级"}
+    ],
+    "impact": "边缘算力节点被武器化，助力深层次内网渗透"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0441",
+    "target": "电力AI预测调度平台",
+    "scenario": "攻击者干扰AI负荷预测导致资源分配错误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "模型结构识别", "description": "收集训练数据与模型参数"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "账号窃取", "description": "获取数据科学家权限登录平台"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "训练数据污染", "description": "注入异常天气与负荷数据"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "模型自动化更新", "description": "污染数据被用于增量训练"},
+      {"stage": "C2", "technique": "T1571", "tool": "API 控制", "description": "远程监控模型输出误差"},
+      {"stage": "影响", "technique": "T0831", "tool": "预测偏差", "description": "资源调度失衡，引发供需波动"}
+    ],
+    "impact": "AI预测可信度丧失，严重时影响大电网安全边界"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0442",
+    "target": "电力报装业务系统",
+    "scenario": "攻击者批量虚构用电申请扰乱资源分配。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "表单结构探测", "description": "识别报装表单字段和校验机制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "验证绕过", "description": "构造合法格式伪造用户提交"},
+      {"stage": "执行", "technique": "T1059.001", "tool": "自动脚本提交", "description": "批量注册虚假报装信息"},
+      {"stage": "持久化", "technique": "T1547.006", "tool": "计划任务", "description": "每日自动递交新申请"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "RESTful API 控制", "description": "远程管理报装队列"},
+      {"stage": "影响", "technique": "T0828", "tool": "资源调配混乱", "description": "配电规划被干扰"}
+    ],
+    "impact": "造成资源浪费与项目排期延迟，增加人工审查压力"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0443",
+    "target": "电力工业APP开发平台",
+    "scenario": "攻击者上传后门应用感染工控网络。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "平台功能分析", "description": "研究平台支持的 APP 构建机制"},
+      {"stage": "初始访问", "technique": "T1195.001", "tool": "用户注册", "description": "以开发者身份注册新账户"},
+      {"stage": "执行", "technique": "T1601.002", "tool": "后门 APP 上线", "description": "上传嵌入恶意代码的工业 APP"},
+      {"stage": "持久化", "technique": "T1546.001", "tool": "脚本挂载", "description": "恶意代码随 APP 启动运行"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "API 回传", "description": "实时收集用户终端数据"},
+      {"stage": "影响", "technique": "T0858", "tool": "工控设备被控", "description": "攻击者控制接入 APP 的终端"}
+    ],
+    "impact": "平台信任体系崩塌，用户设备批量受控"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0444",
+    "target": "电力物资仓储系统",
+    "scenario": "攻击者篡改库存数据影响抢修调度。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库字段分析", "description": "定位库存表和调拨流程"},
+      {"stage": "初始访问", "technique": "T1078.004", "tool": "外包商账号", "description": "通过临时账号登录仓储系统"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "数据篡改", "description": "将关键备件库存修改为 0"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置固化", "description": "防止系统自动回滚修复"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "定时上报", "description": "定期发送库存变化信息"},
+      {"stage": "影响", "technique": "T0828", "tool": "应急抢修失败", "description": "事故现场无物资可用"}
+    ],
+    "impact": "延误故障抢修，扩大停电影响范围"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0445",
+    "target": "智能电表集中器系统",
+    "scenario": "攻击者中断抄表数据上传造成计费错误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "通信链路探测", "description": "识别电表与集中器间的通信协议"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "设备后门", "description": "利用测试固件接口进入集中器"},
+      {"stage": "执行", "technique": "T1499.001", "tool": "协议攻击", "description": "中断抄表数据上传通道"},
+      {"stage": "持久化", "technique": "T1565.003", "tool": "报文篡改", "description": "伪造上传成功响应"},
+      {"stage": "C2", "technique": "T1573.002", "tool": "PLC 隧道", "description": "通过物理链路获取远程控制"},
+      {"stage": "影响", "technique": "T0830", "tool": "电费计算错误", "description": "用户账单大面积出错"}
+    ],
+    "impact": "造成大规模客户投诉与收入统计偏差"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0446",
+    "target": "电力数据中台",
+    "scenario": "攻击者注入恶意数据污染业务分析。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据流分析", "description": "识别数据来源与汇聚策略"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "ETL 接口漏洞", "description": "利用数据接入服务漏洞上传数据"},
+      {"stage": "执行", "technique": "T1005", "tool": "数据注入", "description": "推送大量伪造指标数据"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "任务自动触发", "description": "每日定时污染数据流"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS", "description": "远程分析报表异常情况"},
+      {"stage": "影响", "technique": "T0831", "tool": "BI 报告偏差", "description": "错误分析影响经营判断"}
+    ],
+    "impact": "数据中台输出不可信，影响战略级决策"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0447",
+    "target": "用电客户服务系统",
+    "scenario": "攻击者篡改客户等级影响供电优先级。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "等级结构识别", "description": "分析客户分类及优先策略"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "员工账号", "description": "使用客服账号登录系统"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "等级伪造", "description": "将指定客户标记为优先保障"},
+      {"stage": "持久化", "technique": "T1020.001", "tool": "系统同步", "description": "自动将信息同步至调度平台"},
+      {"stage": "C2", "technique": "T1571", "tool": "Web 控制台", "description": "远程配置客户优先级变化"},
+      {"stage": "影响", "technique": "T0832", "tool": "利益输送", "description": "通过供电策略谋取非法收益"}
+    ],
+    "impact": "破坏服务公平性，造成公共资源滥用"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0448",
+    "target": "电力安全审计平台",
+    "scenario": "攻击者伪造审计日志掩盖攻击行为。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "日志结构识别", "description": "分析审计平台日志格式与存储规则"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "管理员权限", "description": "通过凭证攻击获取审计后台权限"},
+      {"stage": "执行", "technique": "T1070.002", "tool": "日志篡改", "description": "修改或删除攻击活动日志"},
+      {"stage": "持久化", "technique": "T1546.002", "tool": "日志钩子", "description": "设置钩子过滤后续敏感行为"},
+      {"stage": "C2", "technique": "T1071.004", "tool": "DNS 隧道", "description": "上传审计绕过记录"},
+      {"stage": "影响", "technique": "T0834", "tool": "安全误判", "description": "SOC 难以发现真实攻击路径"}
+    ],
+    "impact": "攻击行为隐匿，安全运营失效"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0449",
+    "target": "电力沙箱测试环境",
+    "scenario": "攻击者在测试环境中预植入后门便于日后切换生产。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "版本探测", "description": "识别沙箱版本与上线路径"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "测试账号", "description": "使用测试用户账号进入环境"},
+      {"stage": "执行", "technique": "T1601.001", "tool": "后门部署", "description": "在测试镜像中注入持久后门"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "系统镜像植入", "description": "随着系统上线迁移至生产"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "WebSocket 控制", "description": "远程激活后门模块"},
+      {"stage": "影响", "technique": "T0829", "tool": "生产系统污染", "description": "生产环境上线即被控制"}
+    ],
+    "impact": "测试转生产过程成入侵通道，提升攻击隐蔽性"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0450",
+    "target": "电力工控仿真平台",
+    "scenario": "攻击者利用仿真平台训练攻击模型并优化作战手法。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "平台分析", "description": "获取仿真模型、接口与数据结构"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "演示账号", "description": "使用开放账号登录平台"},
+      {"stage": "执行", "technique": "T1602", "tool": "机器学习训练", "description": "分析系统响应与运行模式"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "后门算法嵌入", "description": "在模型中植入特定异常触发机制"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 通道", "description": "同步模型优化参数"},
+      {"stage": "影响", "technique": "T0845", "tool": "精确攻击升级", "description": "更精准打击物理目标"}
+    ],
+    "impact": "形成闭环攻击推演环境，加速高级持续攻击部署"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0451",
+    "target": "输电线路可视化巡检平台",
+    "scenario": "攻击者劫持图像识别算法更新接口，植入后门模型，误导缺陷识别。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "组件版本识别", "description": "收集图像处理模型的框架版本与部署路径"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "模型下载接口漏洞", "description": "利用未经验证的模型自动升级机制注入恶意模型"},
+      {"stage": "执行", "technique": "T1601.001", "tool": "后门模型注入", "description": "替换原始模型参数，使得识别精度下降"},
+      {"stage": "持久化", "technique": "T1505.003", "tool": "插件服务驻留", "description": "将后门模型注册为常驻检测插件"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " Web 通信", "description": "通过控制端动态注入新识别规则"},
+      {"stage": "影响", "technique": "T0831", "tool": "感知误导", "description": "缺陷识别率大幅下降，隐患无法及时发现"}
+    ],
+    "impact": "输电隐患处置效率降低，极端天气下风险骤增"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0452",
+    "target": "开关站 PLC 控制器",
+    "scenario": "攻击者通过恶意梯形图程序破坏开关站切换逻辑。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "PLC 指令集分析", "description": "收集设备支持的控制语言和通信接口"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "滥用工程师账号", "description": "登录 PLC 工程工具上传恶意程序"},
+      {"stage": "执行", "technique": "T0859", "tool": "梯形图逻辑注入", "description": "修改继电联锁逻辑导致开关无响应"},
+      {"stage": "持久化", "technique": "T1542.004", "tool": "程序块替换", "description": "篡改主程序入口持续执行恶意逻辑"},
+      {"stage": "C2", "technique": "T1102.002", "tool": "嵌入式 Web 控制台", "description": "通过 Web 控制台修改运行状态"},
+      {"stage": "影响", "technique": "T0809", "tool": "自动化逻辑操控", "description": "远程遥控指令失效，站控系统失去响应"}
+    ],
+    "impact": "配网自动化动作失灵，造成配电事故扩大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0453",
+    "target": "智能电表管理系统",
+    "scenario": "攻击者控制智能表底层参数，伪造用电量信息规避高额电费。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "表计型号探测", "description": "收集表计生产厂家与通信规约"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "485 接口注入", "description": "物理接入后利用测试端口访问参数区"},
+      {"stage": "执行", "technique": "T0850", "tool": "参数伪造", "description": "修改倍率参数和脉冲计数器值"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "固件篡改", "description": "刷写固件屏蔽远程校验功能"},
+      {"stage": "C2", "technique": "T1071.004", "tool": " DNS 通道", "description": "通过主站反向查询通报篡改状态"},
+      {"stage": "影响", "technique": "T0834", "tool": "计量规避", "description": "系统采集电量失真，损害电费结算准确性"}
+    ],
+    "impact": "计量数据不实，造成电费结算漏洞与营收损失"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0454",
+    "target": "厂站 HMI 操作站",
+    "scenario": "攻击者伪造 HMI 页面信息，误导运维人员手动操作错误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "接口抓包", "description": "监听 HMI 与 PLC 通信数据获取格式"},
+      {"stage": "初始访问", "technique": "T1078.001", "tool": "本地账户登录", "description": "滥用默认操作员账号访问 HMI 主机"},
+      {"stage": "执行", "technique": "T0851", "tool": "界面内容篡改", "description": "修改界面数据绑定使数据显示异常"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "快捷方式注入", "description": "HMI 启动程序定向至后门页面"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " Web 控制", "description": "通过远程页面控制虚假信息更新"},
+      {"stage": "影响", "technique": "T0829", "tool": "人机界面欺骗", "description": "引导错误操作，可能导致非计划断电"}
+    ],
+    "impact": "操作人员被误导，直接引发控制错误或事故"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0455",
+    "target": "数据中心冷却系统",
+    "scenario": "攻击者破坏冷却控制器逻辑，诱发服务器温度过高造成宕机。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "Modbus 协议嗅探", "description": "分析冷却控制器的控制指令格式"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "控制工程账号滥用", "description": "登录管理站对冷却程序进行篡改"},
+      {"stage": "执行", "technique": "T0809", "tool": "过程操控", "description": "人为关闭部分冷却回路或延迟启停"},
+      {"stage": "持久化", "technique": "T1542", "tool": "脚本自动重启", "description": "部署定时任务恢复恶意设置"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " Web 控制面板", "description": "远程控制温控策略切换"},
+      {"stage": "影响", "technique": "T0827", "tool": "工艺参数操控", "description": "设备温度升高，导致运算平台宕机"}
+    ],
+    "impact": "核心 IT 系统崩溃，电力数据处理能力丧失"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0456",
+    "target": "电网应急广播平台",
+    "scenario": "攻击者通过流媒体服务接口注入非法广播内容。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "API 接口扫描", "description": "识别应急播报系统的流媒体控制通道"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "接口越权访问", "description": "利用未授权调用上传非法音频内容"},
+      {"stage": "执行", "technique": "T1129", "tool": "嵌入播放计划", "description": "篡改调度表触发非法内容播放"},
+      {"stage": "持久化", "technique": "T1505", "tool": "服务劫持", "description": "通过后门插件持续注入播放内容"},
+      {"stage": "C2", "technique": "T1001", "tool": "加密通道", "description": "通过控制中心下发新播报脚本"},
+      {"stage": "影响", "technique": "T0816", "tool": "公众误导", "description": "伪造灾情信息引发群众恐慌"}
+    ],
+    "impact": "公众误解电力运行状态，造成社会不安"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0457",
+    "target": "省级监控数据中心网络核心交换机",
+    "scenario": "攻击者控制交换机配置，实现数据镜像转发到外部地址。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "SNMP 信息收集", "description": "利用社区字符串获取设备拓扑与配置"},
+      {"stage": "初始访问", "technique": "T1133", "tool": " Telnet 弱口令", "description": "通过控制台远程登录设备"},
+      {"stage": "执行", "technique": "T0858", "tool": "端口镜像配置", "description": "配置 SPAN 端口将所有流量发送至攻击者主机"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "启动配置注入", "description": "将恶意配置写入启动项中"},
+      {"stage": "C2", "technique": "T1090.001", "tool": "网络隧道", "description": "通过 GRE 隧道将数据包传出"},
+      {"stage": "影响", "technique": "T1005", "tool": "监控数据外泄", "description": "所有调度 / 安全 /控制数据均可被监听"}
+    ],
+    "impact": "关键链路数据泄露，可能导致全网渗透路径暴露"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0458",
+    "target": "电力移动运维终端",
+    "scenario": "攻击者通过伪装 App 窃取操作员令牌，远程控制现场设备。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1598", "tool": "社交工程", "description": "诱导操作员安装伪装的运维工具 App"},
+      {"stage": "初始访问", "technique": "T1566.002", "tool": "恶意链接投递", "description": "通过短信或邮件投递恶意应用安装包"},
+      {"stage": "执行", "technique": "T1646", "tool": "移动平台信息抓取", "description": "拦截 Token、账户、指令历史等敏感数据"},
+      {"stage": "持久化", "technique": "T1516", "tool": "自动启动权限", "description": "植入后台驻留服务随设备启动加载"},
+      {"stage": "C2", "technique": "T1071.001", "tool": " HTTPS API", "description": "与远端 C2 通信推送令牌数据"},
+      {"stage": "影响", "technique": "T0851", "tool": "远程伪操作", "description": "模拟操作员身份控制现场设备"}
+    ],
+    "impact": "身份伪造控制真实设备，构成严重破坏威胁"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0459",
+    "target": "变电站时间同步服务器 (GPS 时钟)",
+    "scenario": "攻击者干扰时间源，导致系统时钟偏移破坏数据一致性。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "NTP/IRIG-B 协议探测", "description": "分析时钟系统部署方式与依赖路径"},
+      {"stage": "初始访问", "technique": "T1200", "tool": "物理干扰或欺骗", "description": "伪造 GPS 信号源影响授时参考"},
+      {"stage": "执行", "technique": "T1495", "tool": "时钟操控", "description": "将系统统一时间源延迟或扰动"},
+      {"stage": "持久化", "technique": "T1136", "tool": "新增设备身份", "description": "将恶意时间源注册为可信节点"},
+      {"stage": "C2", "technique": "T1090", "tool": "无线中继", "description": "通过 SDR 无线同步信号进行控制"},
+      {"stage": "影响", "technique": "T0835", "tool": "数据时间轴篡改", "description": "采样信息失序，事件记录错乱"}
+    ],
+    "impact": "系统事件链混乱，保护判断与记录追溯失效"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0460",
+    "target": "电压无功优化控制系统",
+    "scenario": "攻击者干预功率因数调节逻辑，诱导电压波动造成设备故障。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "电压控制策略学习", "description": "收集电压 / 无功控制调节策略"},
+      {"stage": "初始访问", "technique": "T1078", "tool": "控制账号盗用", "description": "使用维护账户进入系统控制台"},
+      {"stage": "执行", "technique": "T0809", "tool": "过程参数干预", "description": "篡改目标功率因数使调节器异常动作"},
+      {"stage": "持久化", "technique": "T1546", "tool": "控制策略嵌入", "description": "将修改后的策略固化为默认"},
+      {"stage": "C2", "technique": "T1573", "tool": "加密配置下发", "description": "通过加密文件控制策略更新"},
+      {"stage": "影响", "technique": "T0836", "tool": "电压波动制造", "description": "调压设备频繁动作或保护跳闸"}
+    ],
+    "impact": "主变压器过励磁、电压异常影响整个供电区域"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0461",
+    "target": "变电站冷却系统监控平台",
+    "scenario": "攻击者篡改冷却系统温度阈值导致设备过热损坏。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "环境温度监测", "description": "识别冷却系统温度传感器工作范围"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "远程接口漏洞", "description": "利用监控平台的网络接口漏洞登录系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "配置注入", "description": "修改温度报警阈值"},
+      {"stage": "持久化", "technique": "T1547.001", "tool": "启动脚本修改", "description": "重启后阈值仍保持被篡改状态"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "加密通道", "description": "远程监视冷却系统状态"},
+      {"stage": "影响", "technique": "T0831", "tool": "设备损坏", "description": "关键设备因过热失效"}
+    ],
+    "impact": "变电设施停摆，供电中断风险提升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0462",
+    "target": "供电线路断路器自动控制系统",
+    "scenario": "攻击者误触发断路器关闭导致大范围停电。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1590", "tool": "系统控制拓扑识别", "description": "了解断路器控制逻辑与安全机制"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "内部账号滥用", "description": "通过授权用户账户访问控制系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "命令注入", "description": "发送关闭断路器的远程指令"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "系统服务植入", "description": "植入后台服务可重复下断路器指令"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "WebSocket 控制", "description": "实时控制断路器动作"},
+      {"stage": "影响", "technique": "T0828", "tool": "供电中断", "description": "大范围用户被断电影响日常生活"}
+    ],
+    "impact": "公共安全与经济损失严重"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0463",
+    "target": "高压电缆绝缘监测系统",
+    "scenario": "攻击者伪造绝缘参数报告掩盖绝缘故障趋势。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "监测设备协议分析", "description": "获取报告格式与数据上传机制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "接口绕过", "description": "以低权限账号入侵上传通道"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据伪造", "description": "篡改绝缘电阻下降趋势数据"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "监测模块替换", "description": "监测模块自启动使用伪造逻辑"},
+      {"stage": "C2", "technique": "T1571", "tool": "平台 API", "description": "远程控制报告内容"},
+      {"stage": "影响", "technique": "T0831", "tool": "设备故障", "description": "绝缘问题被长期忽视，可能发生击穿或者火灾风险"}
+    ],
+    "impact": "线路安全性降低，引发重大隐患"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0464",
+    "target": "电力市场交易平台",
+    "scenario": "攻击者操纵交易数据从中牟利。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "市场竞价机制分析", "description": "理解报价、成交、清算流程"},
+      {"stage": "初始访问", "technique": "T1195.001", "tool": "市场参与者注册", "description": "以合法身份加入交易平台"},
+      {"stage": "执行", "technique": "T1059.001", "tool": "自动脚本交易", "description": "自动提交异常高低价单以扰乱市场"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "后台任务", "description": "定期执行异常订单策略"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "REST API 控制", "description": "远程调整交易策略参数"},
+      {"stage": "影响", "technique": "T0834", "tool": "经济损失", "description": "市场价格波动，被攻击者套利"}
+    ],
+    "impact": "公平性受损，市场监管难度加大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0465",
+    "target": "配电环网自动切换系统",
+    "scenario": "攻击者误导自动切换造成供电断面隔离错误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "网络拓扑探测", "description": "识别环网自动切换节点与连接状态"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "通信链路漏洞", "description": "利用环网切换控制通信接口"},
+      {"stage": "执行", "technique": "T0851", "tool": "命令注入", "description": "发送错误切换指令"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "固化配置", "description": "修改切换控制逻辑"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "WebSocket 控制", "description": "监控与控制切换状态"},
+      {"stage": "影响", "technique": "T0828", "tool": "供电中断", "description": "供电切面被错误隔离导致客户停电"}
+    ],
+    "impact": "环网自动化信任丧失，恢复成本高"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0466",
+    "target": "电力设备远程维护接口",
+    "scenario": "攻击者通过远程维护接口植入恶意固件。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "固件版本识别", "description": "获取设备当前固件签名及版本信息"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "未加密维护通道", "description": "通过维护口进入设备控制系统"},
+      {"stage": "执行", "technique": "T1601.001", "tool": "恶意固件刷写", "description": "替换合法固件为含后门固件"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "固件自启动", "description": "设备重启后自动加载新固件"},
+      {"stage": "C2", "technique": "T1571", "tool": "HTTPS 隧道", "description": "远程通信固件状态与控制信息"},
+      {"stage": "影响", "technique": "T0829", "tool": "设备控制", "description": "后门被激活可导致异常操作或 Shutdown"}
+    ],
+    "impact": "设备完全被操控，系统信任链破坏"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0467",
+    "target": "电网边缘传感器网络",
+    "scenario": "攻击者制造虚假读数误导调度决策。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "传感器类型探测", "description": "识别传感器布置与数据上传路径"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "内部节点接口", "description": "利用边缘节点弱认证访问传感器网关"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据注入", "description": "替换真实读数为虚假数值"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "边缘脚本", "description": "脚本在网关长期运行"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "MQTT/WebSocket", "description": "远程调整注入参数"},
+      {"stage": "影响", "technique": "T0831", "tool": "决策偏差", "description": "调度系统误判负荷，导致供电不足或过载"}
+    ],
+    "impact": "系统对负荷状况感知失真，引发连锁问题"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0468",
+    "target": "电力需求侧管理平台",
+    "scenario": "攻击者虚增需求响应信号扰乱电网调度。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "需求侧信号流程研究", "description": "了解用户设备响应机制与厂商接口"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "公开 API 漏洞", "description": "在需求响应接口中注入虚假用户请求"},
+      {"stage": "执行", "technique": "T1059.001", "tool": "自动脚本", "description": "批量发送需求响应信号"},
+      {"stage": "持久化", "technique": "T1547.006", "tool": "计划任务", "description": "定时发送假信号"},
+      {"stage": "C2", "technique": "T1571", "tool": "平台控制通道", "description": "远程配置需求响应策略"},
+      {"stage": "影响", "technique": "T0831", "tool": "调度异常", "description": "电力计划混乱，可能造成峰值负荷超出承载"}
+    ],
+    "impact": "电网稳定性降低，成本上升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0469",
+    "target": "电力系统状态评估平台",
+    "scenario": "攻击者操纵评估指标误导管理层决策。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "指标定义收集", "description": "理解系统状态评估指标体系"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "演示账号滥用", "description": "获得评估平台访问权限"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据篡改", "description": "修改关键健康指标数据"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "后台任务", "description": "定期上传已被篡改的评估报告"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "HTTPS 控制通道", "description": "远端控制评估参数"},
+      {"stage": "影响", "technique": "T0834", "tool": "误导决策", "description": "高层依据错误指标做决策导致投资或维护偏差"}
+    ],
+    "impact": "资源错配，风险被低估或被高估导致不合理投入"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0470",
+    "target": "电力输电线路健康监测系统",
+    "scenario": "攻击者通过干扰巡线传感器导致无法及时预警断线风险。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "线路振动/倾斜传感器探测", "description": "识别巡线传感器布置及通信方式"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "通信协议缺陷", "description": "利用协议未加密或认证弱点接入传感器网络"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据延迟注入", "description": "故意延迟或屏蔽真实断线告警"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "固件补丁植入", "description": "修改传感器固件使告警被抑制"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "无线或有线隧道通信", "description": "攻击者远程控制通知机制"},
+      {"stage": "影响", "technique": "T0831", "tool": "断线未被及时发现", "description": "断线扩大形成输电事故隐患"}
+    ],
+    "impact": "线路故障积累，可能发展为大规模供电事故"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0471",
+    "target": "电力备份发电系统",
+    "scenario": "攻击者在备用发电机组启动逻辑中植入后门，使其不能响应紧急切换。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "备用发电机控制逻辑分析", "description": "识别切换逻辑与启动命令顺序"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "系统管理接口漏洞", "description": "通过调试或管理端口访问逻辑控制模块"},
+      {"stage": "执行", "technique": "T1601.001", "tool": "后门固件注入", "description": "替换启动脚本或固件使切换失败"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "固件启动项修改", "description": "设备重启后后门生效"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "加密隧道", "description": "远程激活备用系统或停用备用启动"},
+      {"stage": "影响", "technique": "T0829", "tool": "备用失效", "description": "紧急情况下备用发电机未能启动导致断电风险加剧"}
+    ],
+    "impact": "可靠性急剧下降，应急响应能力丧失"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0472",
+    "target": "电力系统负荷频率控制器",
+    "scenario": "攻击者干扰频率控制算法引起网络不稳。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "控制器参数分析", "description": "识别频率控制器的算法与行为模型"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "控制器接口漏洞", "description": "访问频率控制器远程管理接口"},
+      {"stage": "执行", "technique": "T0851", "tool": "算法注入", "description": "篡改响应增益或整定参数"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置文件固化", "description": "控制器重启后保持篡改状态"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "安全通道", "description": "实时监控频率偏差与控制状态"},
+      {"stage": "影响", "technique": "T0828", "tool": "电网振荡", "description": "系统频率波动引发发电机脱网或负荷切断"}
+    ],
+    "impact": "网频不稳大规模停电风险提升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0473",
+    "target": "变电站电压调节器",
+    "scenario": "攻击者控制电压调节器使局部电压过高或过低损坏设备。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "电压调节器型号与控制协议侦测", "description": "了解设备调节范围与控制命令"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "控制协议未授权访问", "description": "绕过认证下发调节命令"},
+      {"stage": "执行", "technique": "T0851", "tool": "命令注入", "description": "将电压调节命令设为极端值"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "固件或配置修改", "description": "修改调节逻辑使之不可恢复到正常状态"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "加密控制通道", "description": "远程控制电压变化"},
+      {"stage": "影响", "technique": "T0829", "tool": "终端设备损坏", "description": "用户设备或工控设备因电压异常受损"}
+    ],
+    "impact": "供电质量严重下降，用户设备风险加剧"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0474",
+    "target": "电网通信中枢节点",
+    "scenario": "攻击者使通信中枢节点发生拒绝服务攻击，断开多个远端设备与中央控制系统连接。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "通信拓扑映射", "description": "识别中枢节点及其链路"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "网络服务漏洞", "description": "利用 DDOS 或协议漏洞使节点资源耗尽"},
+      {"stage": "执行", "technique": "T1499.001", "tool": "网络拒绝服务", "description": "对通信中枢发起流量攻击或资源耗尽攻击"},
+      {"stage": "持久化", "technique": "T1565.003", "tool": "流量伪装", "description": "使干扰难以被识别为攻击行为"},
+      {"stage": "C2", "technique": "T1573.002", "tool": "加密隧道控制", "description": "远程激发或停止 DoS 攻击"},
+      {"stage": "影响", "technique": "T0828", "tool": "控制中断", "description": "失去对多个远端设备的监测与控制能力"}
+    ],
+    "impact": "调度盲区扩大，事故响应延误"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0475",
+    "target": "电力智控中心备份数据库",
+    "scenario": "攻击者破坏备份数据库的数据完整性。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "数据库结构分析", "description": "了解备份库表结构与校验规则"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "备份管理员账号", "description": "获取对备份系统的访问权限"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据篡改", "description": "修改关键历史数据或清除校验值"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "脚本植入", "description": "植入自检测校验绕过逻辑"},
+      {"stage": "C2", "technique": "T1571", "tool": "HTTPS", "description": "远程同步破坏状态"},
+      {"stage": "影响", "technique": "T0834", "tool": "恢复困难", "description": "灾难恢复时数据不可信，恢复成本激增"}
+    ],
+    "impact": "备份失效，恢复时间及代价大幅提升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0476",
+    "target": "电力时间同步系统",
+    "scenario": "攻击者篡改时钟同步服务时间源，导致时间戳紊乱。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "网络时间协议（NTP）分析", "description": "识别时钟源地址与验证机制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "NTP 服务漏洞", "description": "通过未加固的 NTP 服务发送控制请求"},
+      {"stage": "执行", "technique": "T0851", "tool": "时间源替换", "description": "将时间源替换为恶意服务器"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "守护进程注入", "description": "守护进程持续覆盖原有时间源设置"},
+      {"stage": "C2", "technique": "T1571", "tool": "加密渠道", "description": "远程调整或伪造时间戳逻辑"},
+      {"stage": "影响", "technique": "T0831", "tool": "日志错乱", "description": "时间同步异常导致故障诊断 & 操作日志失效"}
+    ],
+    "impact": "事件溯源困难，安全审计失准"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0477",
+    "target": "电力核心交换机",
+    "scenario": "攻击者植入恶意规则导致分包路由错误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "交换机规则及 ACL 分析", "description": "识别路由/ACL 表项与管理通道"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "管理口漏洞", "description": "通过交换机管理口未授权接口入侵"},
+      {"stage": "执行", "technique": "T0851", "tool": "ACL 或路由表操作注入", "description": "更改路由或访问控制列表规则"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "启动配置篡改", "description": "重启后规则仍被保留"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "加密管理通道", "description": "远程控制规则状态"},
+      {"stage": "影响", "technique": "T0829", "tool": "通信流量错误", "description": "重要监控或控制数据被导错或阻隔"}
+    ],
+    "impact": "网络通信断层，监控盲区形成"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0478",
+    "target": "电力线路节点 UPS 系统",
+    "scenario": "攻击者使 UPS 在关键时刻断电。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "UPS 状态与管理接口探测", "description": "识别备用电源切换逻辑和自动检测机制"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "内部维护账号", "description": "以维护人员身份访问 UPS 管理接口"},
+      {"stage": "执行", "technique": "T0851", "tool": "切换命令注入", "description": "强制切换到失效或断电状态"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "配置固化", "description": "使强制状态在重启后仍保留"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "管理隧道", "description": "远程控制 UPS 状态"},
+      {"stage": "影响", "technique": "T0828", "tool": "断电事件", "description": "关键节点失去电力供应影响监控／控制系统"}
+    ],
+    "impact": "监控或保护系统失能，引发连锁故障"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0479",
+    "target": "电力后台告警系统",
+    "scenario": "攻击者屏蔽关键告警以推迟响应。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "告警规则与阈值分析", "description": "确定哪些告警被认为是关键"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "后台接口漏洞", "description": "绕过认证访问告警系统配置"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "告警规则删除／修改", "description": "清除或提升关键告警阈值"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "任务计划挂钩", "description": "持续屏蔽关键告警生成"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "远程监控控制", "description": "远端控制告警是否触发"},
+      {"stage": "影响", "technique": "T0831", "tool": "响应延迟", "description": "故障未及时被发现和处理"}
+    ],
+    "impact": "事故扩大，安全风险加剧"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0480",
+    "target": "电力线路无人值守巡检机器人",
+    "scenario": "攻击者远程控制巡检机器人误入高压线杆区域造成破坏。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "机器人控制协议探测", "description": "识别巡检机器人导航和避障系统通信方式"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "无线接口漏洞", "description": "入侵机器人远程控制模块"},
+      {"stage": "执行", "technique": "T0851", "tool": "运动控制注入", "description": "改变机器人路径使其误入危险区域"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "固件或导航模块改写", "description": "导航逻辑被永久修改"},
+      {"stage": "C2", "technique": "T1071.003", "tool": "实时遥控通道", "description": "攻击者实时调整机器人行为"},
+      {"stage": "影响", "technique": "T0829", "tool": "物理破坏", "description": "机器人撞击设备造成故障或人员伤害风险"}
+    ],
+    "impact": "巡检安全失控，设备与人员风险上升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0481",
+    "target": "电力行业标准文档库",
+    "scenario": "攻击者篡改标准规范文档误导维护操作。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "文档结构与版本控制探测", "description": "识别标准文档存放与控制机制"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "演示账号滥用", "description": "以低权限用户访问文档库"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "文档内容篡改", "description": "修改操作规范与安全流程"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "版本控制绕过", "description": "标准被长期误导维持"},
+      {"stage": "C2", "technique": "T1571", "tool": "API 接口控制", "description": "远程同步误导文档版本"},
+      {"stage": "impact", "technique": "T0834", "tool": "误导操作", "description": "维修或操作基于错误标准执行，造成隐患"}
+    ],
+    "impact": "行业流程被腐蚀，设备或人员安全受威胁"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0482",
+    "target": "电厂燃料供应监测系统",
+    "scenario": "攻击者伪造燃料数据导致燃料供应中断或浪费。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "供应链监测流程分析", "description": "了解燃料入厂、存储与监控方式"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "仓库网络权限滥用", "description": "进入燃料监控子网"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据伪造", "description": "上传虚假燃料剩余或消耗数据"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "自动脚本", "description": "自动每日上报虚假数据"},
+      {"stage": "C2", "technique": "T1571", "tool": "HTTPS 控制", "description": "远程调整伪造、真实数据切换"},
+      {"stage": "影响", "technique": "T0831", "tool": "燃料匮乏或浪费", "description": "发电效率下降，可能停机或成本飙升"}
+    ],
+    "impact": "发电能力受限，成本与可靠性受双重打击"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0483",
+    "target": "电力网络拓扑发现工具",
+    "scenario": "攻击者利用该工具获取网络内部结构用于后续渗透。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "探测工具路径与权限", "description": "定位拓扑发现软件并研究其权限与通信方式"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "演示或工具账号滥用", "description": "使用已有许可证或账号登录工具"},
+      {"stage": "执行", "technique": "T1087", "tool": "账户发现", "description": "探查网络设备、子网、关键节点账户"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "工具权限提升", "description": "提升或保存工具的高权限访问"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "安全通道", "description": "将拓扑与账户信息回传"},
+      {"stage": "impact", "technique": "T0835", "tool": "情报外泄", "description": "网络结构暴露加大攻击面"}
+    ],
+    "impact": "渗透路径清晰化，后续攻击风险增大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0484",
+    "target": "电力计量检测设备",
+    "scenario": "攻击者更改计量检测设备校准系数造成计费重大误差。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "校准流程与系数分析", "description": "识别检测设备校准机制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "设备接口漏洞", "description": "通过未授权接口访问校准参数"},
+      {"stage": "执行", "technique": "T0851", "tool": "参数注入", "description": "更改校准系数使读数偏高或偏低"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "固件 /配置固化", "description": "校准被永久修改"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "管理通道", "description": "远程开启/关闭校准偏差模式"},
+      {"stage": "impact", "technique": "T0830", "tool": "计费误差", "description": "客户被错收费或电力公司收入受损"}
+    ],
+    "impact": "经济纠纷严重，公司与客户信任受损"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0485",
+    "target": "电力需求预测模型服务",
+    "scenario": "攻击者通过模型投毒使需求预测偏低或偏高。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "模型输入 & 数据源识别", "description": "了解需求预测使用哪些天气、历史负荷、经济指标"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "数据科学家账号", "description": "获取模型训练平台访问权限"},
+      {"stage": "执行", "technique": "T1565.001", "tool": "训练数据污染", "description": "插入异常值使模型学习偏差"},
+      {"stage": "持久化", "technique": "T1546.008", "tool": "自动重训练逻辑", "description": "污染被持续引入未来训练轮次"},
+      {"stage": "C2", "technique": "T1571", "tool": "API /调度服务", "description": "远端监控并调整污染模式"},
+      {"stage": "impact", "technique": "T0831", "tool": "预测误差", "description": "资源配置失当，电力供应或负荷分配失衡"}
+    ],
+    "impact": "调度计划频繁被打乱，系统效率下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0486",
+    "target": "电力调度通信加密网关",
+    "scenario": "攻击者绕过加密或植入伪造证书进行中间人攻击。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "通信证书与加密方式侦测", "description": "识别网关使用的加密协议与证书签名机制"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "中间人攻击入口", "description": "通过网络位置或 DNS 劫持引入中间人节点"},
+      {"stage": "执行", "technique": "T1550", "tool": "替换证书或信任链操纵", "description": "用伪造证书使流量被解密和篡改"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "恶意证书固化", "description": "让系统持久信任伪证书"},
+      {"stage": "C2", "technique": "T1571", "tool": "中间控制通道", "description": "中间人节点控制通信内容"},
+      {"stage": "impact", "technique": "T0834", "tool": "数据被篡改或截断", "description": "调度命令、监控数据被伪造或延误"}
+    ],
+    "impact": "通信安全被破坏，整体网络可信性下降"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0487",
+    "target": "电厂排放监测系统",
+    "scenario": "攻击者造假排放数据规避环境监管处罚。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "排放监测设备与传感器格式探测", "description": "识别排放数据采集通道和上传机制"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "内部网络访问", "description": "进入监测子网或管理系统"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "数据伪造", "description": "替换真实排放浓度为低值"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "监测设备固件修改", "description": "使其持续输出伪造数据"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "远程管理通道", "description": "控制伪造与真实模式切换"},
+      {"stage": "impact", "technique": "T0831", "tool": "环境监管逸出", "description": "污染未被发现或量化偏低"}
+    ],
+    "impact": "环保法规执行失效，社会信任受损"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0488",
+    "target": "电厂废水处理监控系统",
+    "scenario": "攻击者篡改废水处理流程导致环境事故。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1592", "tool": "水质参数与工艺流程探测", "description": "了解废水处理关键参数监控方式"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "控制界面漏洞", "description": "通过 Web 或 SCADA 接口访问控制系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "参数注入", "description": "调整处理药剂投放或流程顺序"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "控制逻辑修改", "description": "重启系统后仍执行恶意流程"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "加密通道", "description": "远程监控与修改处理流程"},
+      {"stage": "impact", "technique": "T0831", "tool": "环境污染", "description": "废水排放超标，可能造成法律与生态危害"}
+    ],
+    "impact": "环境与社会责任风险显著"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0489",
+    "target": "电力资产管理系统",
+    "scenario": "攻击者修改资产台账以隐藏被盗窃或损坏设备。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1596", "tool": "资产登记结构分析", "description": "了解资产分类、编号、责任归属流程"},
+      {"stage": "初始访问", "technique": "T1078.004", "tool": "外包商账户滥用", "description": "通过外包或维护供应商账户访问系统"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "资产记录篡改", "description": "将设备标记为已归还或未安装"},
+      {"stage": "持久化", "technique": "T1542.001", "tool": "日志或数据库挂钩", "description": "防止自动修正或审计探测"},
+      {"stage": "C2", "technique": "T1571", "tool": "REST API 控制", "description": "远程修改资产状态"},
+      {"stage": "impact", "technique": "T0834", "tool": "隐藏损失", "description": "被盗或损毁设备未被及时发现或通报"}
+    ],
+    "impact": "财务与安全审计风险上升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0490",
+    "target": "电力人员排班系统",
+    "scenario": "攻击者操纵排班使关键岗位无法及时响应事故。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "人员与岗位结构分析", "description": "识别关键岗位与响应乘员安排机制"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "演示账号访问", "description": "获得管理员或调度员账号访问排班系统"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "排班数据篡改", "description": "移除或错排关键人员班次"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "排班规则注入", "description": "以规则形式隐藏篡改行为"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "远程接口控制", "description": "调整排班变动时间与频率"},
+      {"stage": "impact", "technique": "T0828", "tool": "响应延误", "description": "事故中关键岗位无人及时到位，影响恢复"}
+    ],
+    "impact": "人在关键流程缺位，事故扩大风险高"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0491",
+    "target": "电力客户信任评分系统",
+    "scenario": "攻击者篡改客户评分影响优惠与服务等级。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "评分标准与权重探测", "description": "了解评分系统输入与算法"},
+      {"stage": "初始访问", "technique": "T1078.003", "tool": "低权限账号", "description": "使用客户支持或系统用户权限访问"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "评分数据注入", "description": "将特定客户评分提升"},
+      {"stage": "持久化", "technique": "T1547.006", "tool": "计划任务", "description": "自动调整特定客户评分"},
+      {"stage": "C2", "technique": "T1571", "tool": "平台接口", "description": "控制评分策略变动"},
+      {"stage": "impact", "technique": "T0834", "tool": "服务等级错配", "description": "服务优惠被滥用，资源分配不公"}
+    ],
+    "impact": "客户间信任博弈失衡，公司品牌受损"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0492",
+    "target": "电力辅助服务调度系统",
+    "scenario": "攻击者干扰调频或调压辅助服务告警导致响应失误。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1595", "tool": "辅助服务告警机制分析", "description": "识别调频/调压告警流程"},
+      {"stage": "初始访问", "technique": "T1190", "tool": "管理接口漏洞", "description": "进入告警触发子系统"},
+      {"stage": "执行", "technique": "T0851", "tool": "命令注入", "description": "禁止或延迟告警触发"},
+      {"stage": "持久化", "technique": "T1542.002", "tool": "守护进程注入", "description": "持续抑制告警"},
+      {"stage": "C2", "technique": "T1071.001", "tool": "控制隧道", "description": "远程管理告警状态"},
+      {"stage": "impact", "technique": "T0828", "tool": "响应延误", "description": "辅助服务失效风险上升"}
+    ],
+    "impact": "电网辅助功能受损，主系统负荷波动风险加大"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0493",
+    "target": "电力系统运维工单管理系统",
+    "scenario": "攻击者伪造工单内容导致错误维修方向。",
+    "stages": [
+      {"stage": "侦察", "technique": "T1593", "tool": "工单流程与字段探测", "description": "了解工单内容结构、责任分配"},
+      {"stage": "初始访问", "technique": "T1078.002", "tool": "运维人员账号滥用", "description": "以运维人员身份访问系统"},
+      {"stage": "执行", "technique": "T1565.002", "tool": "工单篡改／伪造", "description": "替换或加入误导性工单任务"},
+      {"stage": "持久化", "technique": "T1546.004", "tool": "系统任务挂钩", "description": "使错误工单长期存在于系统中"},
+      {"stage": "C2", "technique":"T1071.001","tool":"管理 API 通道","description":"远程控制工单内容变更"},
+      {"stage": "impact", "technique":"T0834","tool":"错误维修","description":"维修方向错乱，引发设备负荷或安全问题"}
+    ],
+    "impact":"维护质量下降，后续故障风险上升"
+  },
+  {
+    "id": "APT-SCRIPT-ELEC-0494",
+    "target":"电力计费系统账目审计日志",
+    "scenario":"攻击者清除审计日志以掩盖前面的非正常计费变更。",
+    "stages":[
+      {"stage":"侦察","technique":"T1596","tool":"审计日志存储路径分析","description":"定位审计日志存放位置与备份策略"},
+      {"stage":"初始访问","technique":"T1078.003","tool":"审计系统账号","description":"通过合法账号进入审计系统"},
+      {"stage":"执行","technique":"T1070.002","tool":"日志删除／修改","description":"删除或篡改关键计费审计记录"},
+      {"stage":"持久化","technique":"T1546.002","tool":"钩子植入","description":"拦截后续日志写入或篡改行为"},
+      {"stage":"C2","technique":"T1071.001","tool":"安全通道","description":"上传被删除日志或状态报告"},
+      {"stage":"impact","technique":"T0834","tool":"掩盖不当计费变动","description":"用户或外部审计难以发现问题"}
+    ],
+    "impact":"公司审计风险与法律风险上升"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0495",
+    "target":"电厂燃料价格预测系统",
+    "scenario":"攻击者篡改历史价格输入以扭曲未来价格预测。",
+    "stages":[
+      {"stage":"侦察","technique":"T1592","tool":"预测模型输入采样分析","description":"识别价格输入与外部市场数据来源"},
+      {"stage":"初始访问","technique":"T1078.003","tool":"市场数据接口账号","description":"获取预测服务访问权限"},
+      {"stage":"执行","technique":"T1565.001","tool":"数据污染","description":"篡改历史价格数据集"},
+      {"stage":"持久化","technique":"T1546.008","tool":"自动重训练机制","description":"污染输入持续被用到模型训练中"},
+      {"stage":"C2","technique":"T1571","tool":"API 通道","description":"远程监控预测偏差"},
+      {"stage":"impact","technique":"T0831","tool":"预测失真","description":"错误价格预估导致采买与预算出现严重误差"}
+    ],
+    "impact":"成本核算失真，预算与盈利受损"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0496",
+    "target":"配电网停电恢复系统",
+    "scenario":"攻击者阻断恢复信号导致停电持续时间大幅延长。",
+    "stages":[
+      {"stage":"侦察","technique":"T1592","tool":"恢复流程探测","description":"识别恢复信号路径与权限控制"},
+      {"stage":"初始访问","technique":"T1190","tool":"接口弱认证","description":"进入恢复控制子系统"},
+      {"stage":"执行","technique":"T0851","tool":"命令注入","description":"屏蔽或延迟恢复启动信号"},
+      {"stage":"持久化","technique":"T1542.002","tool":"固件 /配置修改","description":"恢复启动命令被持续拦截"},
+      {"stage":"C2","technique":"T1071.001","tool":"远程管理通道","description":"控制恢复时机"},
+      {"stage":"impact","technique":"T0828","tool":"停电时间延长","description":"用户耐受度下降，经济与社会影响加剧"}
+    ],
+    "impact":"公共服务中断时间过长，引起社会问题"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0497",
+    "target":"输电线路地理信息系统（GIS）",
+    "scenario":"攻击者篡改线路地图位置误导运维人员。",
+    "stages":[
+      {"stage":"侦察","technique":"T1596","tool":"GIS 数据结构分析","description":"识别地理坐标与线路连接结构"},
+      {"stage":"初始访问","technique":"T1078.003","tool":"文档系统账号","description":"进入 GIS 编辑权限角色"},
+      {"stage":"执行","technique":"T1565.002","tool":"地图坐标替换","description":"更改线路位置与结构关系"},
+      {"stage":"持久化","technique":"T1542.001","tool":"版本控制绕开","description":"错误地图成为新版本常态"},
+      {"stage":"C2","technique":"T1571","tool":"API 接口","description":"远程控制地图内容"},
+      {"stage":"impact","technique":"T0835","tool":"运维误导","description":"巡视、修复路线错误导致资源浪费与安全隐患"}
+    ],
+    "impact":"运维成本上升，错误操作风险显著"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0498",
+    "target":"电力系统应急广播系统",
+    "scenario":"攻击者在紧急广播中插入误导信息引起恐慌。",
+    "stages":[
+      {"stage":"侦察","technique":"T1593","tool":"广播内容与流程分析","description":"识别应急广播触发条件与内容审查机制"},
+      {"stage":"初始访问","technique":"T1190","tool":"控制接口漏洞", "description":"进入广播控制后台"},
+      {"stage":"执行","technique":"T1059.001","tool":"脚本注入", "description":"插入误导性内容或取消关键警告信息"},
+      {"stage":"持久化","technique":"T1546.004","tool":"后台任务", "description":"广播控制被持续篡改"},
+      {"stage":"C2","technique":"T1071.001","tool":"安全通道", "description":"远程操控广播内容时机"},
+      {"stage":"impact","technique":"T0828","tool":"信息误导", "description":"公众被错误引导，可能造成恐慌或误动作"}
+    ],
+    "impact":"公共安全受威胁，信任体系破裂"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0499",
+    "target":"电力系统虚拟培训环境（VR/AR 仿真）",
+    "scenario":"攻击者通过仿真环境测试现实攻击策略并导入真实网络。",
+    "stages":[
+      {"stage":"侦察","technique":"T1596","tool":"仿真环境架构分析","description":"了解仿真环境搭建方式及与生产系统交互方式"},
+      {"stage":"初始访问","technique":"T1078.003","tool":"演示账号访问", "description":"获得仿真环境入口权限"},
+      {"stage":"执行","technique":"T1602","tool":"策略演练模拟", "description":"在仿真环境中测试攻击路径与效果"},
+      {"stage":"持久化","technique":"T1542.001","tool":"攻击模型储存", "description":"将有效策略记录下来以便现实中使用"},
+      {"stage":"C2","technique":"T1571","tool":"仿真控制通道","description":"远程调整仿真策略以优化攻击"},
+      {"stage":"impact","technique":"T0835","tool":"现实威胁增强", "description":"仿真验证后引入真实系统，对抗防御能力较弱区域"}
+    ],
+    "impact":"攻击准备期被大大缩短，防御被动性显著加强"
+  },
+  {
+    "id":"APT-SCRIPT-ELEC-0500",
+    "target":"电力系统供应商管理平台",
+    "scenario":"攻击者控制供应商权限提交恶意补丁或组件。",
+    "stages":[
+      {"stage":"侦察","technique":"T1596","tool":"供应商平台结构分析", "description":"了解第三方模块提交流程与签名机制"},
+      {"stage":"初始访问","technique":"T1078.004","tool":"供应商账号滥用", "description":"获供应商提交权限"},
+      {"stage":"执行","technique":"T1601.002","tool":"恶意组件提交", "description":"提交带隐蔽后门的补丁或模块"},
+      {"stage":"持久化","technique":"T1542.001","tool":"组件自动更新", "description":"恶意补丁随常规更新部署"},
+      {"stage":"C2","technique":"T1573.002","tool":"VPN／SSH 隧道控制", "description":"远程控制供应商模块状态"},
+      {"stage":"impact","technique":"T0829","tool":"内部入侵", "description":"通过供应商组件渗透到电力系统内部核心"}
+    ],
+    "impact":"信任链被破坏，第三方成为攻击入口"
+  }
+]

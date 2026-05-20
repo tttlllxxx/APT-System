@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#ff6666", "font": {"color": "#000000"}, "id": "Energetic Bear", "label": "Energetic Bear", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Crouching Yeti", "label": "Crouching Yeti", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Dragonfly", "label": "Dragonfly", "shape": "dot"}, {"color": "#99ffff", "font": {"color": "#000000"}, "id": "Berserk Bear", "label": "Berserk Bear", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Industrial sector", "label": "Industrial sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Manufacturing sector", "label": "Manufacturing sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Pharmaceutical sector", "label": "Pharmaceutical sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Construction sector", "label": "Construction sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Education sector", "label": "Education sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Information Technology sector", "label": "Information Technology sector", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Energy sector", "label": "Energy sector", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Havex", "label": "Havex", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Sysmain", "label": "Sysmain", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "ClientX", "label": "ClientX", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Karagany", "label": "Karagany", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "LightsOut_exploit_kit", "label": "LightsOut_exploit_kit", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Watering-hole attacks", "label": "Watering-hole attacks", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Trojanized_software_installers", "label": "Trojanized_software_installers", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Compromised_websites_for_C2_and_hosting", "label": "Compromised_websites_for_C2_and_hosting", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Spear-phishing_emails_with_embedded_Flash_SWF", "label": "Spear-phishing_emails_with_embedded_Flash_SWF", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Supply_chain_compromise", "label": "Supply_chain_compromise", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1566.001", "label": "T1566.001", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1189", "label": "T1189", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1195", "label": "T1195", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1071.001", "label": "T1071.001", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1105", "label": "T1105", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "T1003", "label": "T1003", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "OPC_scanner_module", "label": "OPC_scanner_module", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "DLL_modules", "label": "DLL_modules", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "system_and_network_information", "label": "system_and_network_information", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Havex OPC_scanner_module", "label": "Havex OPC_scanner_module", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "OPC_server_information", "label": "OPC_server_information", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "collects_system_information", "label": "collects_system_information", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "submits_data_to_C2", "label": "submits_data_to_C2", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "executes_commands_on_host", "label": "executes_commands_on_host", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "collects_files_for_exfiltration", "label": "collects_files_for_exfiltration", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "screen_capture_support", "label": "screen_capture_support", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "remote_shell_commands", "label": "remote_shell_commands", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "downloads_additional_executables", "label": "downloads_additional_executables", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "reads_file_content", "label": "reads_file_content", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "extracts_IE_credentials", "label": "extracts_IE_credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "injects_DLL_into_browsers", "label": "injects_DLL_into_browsers", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "captures_screenshots", "label": "captures_screenshots", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "enumerates_files_and_documents", "label": "enumerates_files_and_documents", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Havex Loader", "label": "Havex Loader", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "decrypted_modules_into_memory", "label": "decrypted_modules_into_memory", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "compromised_websites_C2", "label": "compromised_websites_C2", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "ports_44818_105_502", "label": "ports_44818_105_502", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Network_scanner_module", "label": "Network_scanner_module", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "local_network", "label": "local_network", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Contacts_stealer_module", "label": "Contacts_stealer_module", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Outlook_contact_details", "label": "Outlook_contact_details", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Browser_credential_theft_module", "label": "Browser_credential_theft_module", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "browser_login_credentials", "label": "browser_login_credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BrowserPasswordDecryptor", "label": "BrowserPasswordDecryptor", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "browser_credential_tool_placeholder", "label": "browser_credential_tool_placeholder", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CVE-2011-0611", "label": "CVE-2011-0611", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CVE-2013-2465", "label": "CVE-2013-2465", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CVE-2013-1347", "label": "CVE-2013-1347", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CVE-2012-1723", "label": "CVE-2012-1723", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "malware_via_watering-holing", "label": "malware_via_watering-holing", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "malware_via_spearphishing", "label": "malware_via_spearphishing", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "malware_via_trojanized_installers", "label": "malware_via_trojanized_installers", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Havex_Loader", "label": "Havex_Loader", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Sysmain_backdoor", "label": "Sysmain_backdoor", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "ClientX_backdoor", "label": "ClientX_backdoor", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Karagany_backdoor", "label": "Karagany_backdoor", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Energetic Bear", "label": "alias_of", "to": "Crouching Yeti"}, {"arrows": "to", "from": "Energetic Bear", "label": "alias_of", "to": "Dragonfly"}, {"arrows": "to", "from": "Energetic Bear", "label": "alias_of", "to": "Berserk Bear"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Industrial sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Manufacturing sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Pharmaceutical sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Construction sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Education sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Information Technology sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "targets", "to": "Energy sector"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Havex"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Sysmain"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "ClientX"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Karagany"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "LightsOut_exploit_kit"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Watering-hole attacks"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Trojanized_software_installers"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Compromised_websites_for_C2_and_hosting"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Spear-phishing_emails_with_embedded_Flash_SWF"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses", "to": "Supply_chain_compromise"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1566.001"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1189"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1195"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1071.001"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1105"}, {"arrows": "to", "from": "Energetic Bear", "label": "uses_technique", "to": "T1003"}, {"arrows": "to", "from": "Havex", "label": "author_attribution", "to": "Energetic Bear"}, {"arrows": "to", "from": "Havex", "label": "has_module", "to": "OPC_scanner_module"}, {"arrows": "to", "from": "Havex", "label": "downloads", "to": "DLL_modules"}, {"arrows": "to", "from": "Havex", "label": "collects", "to": "system_and_network_information"}, {"arrows": "to", "from": "Havex OPC_scanner_module", "label": "collects", "to": "OPC_server_information"}, {"arrows": "to", "from": "Sysmain", "label": "functionality", "to": "collects_system_information"}, {"arrows": "to", "from": "Sysmain", "label": "functionality", "to": "submits_data_to_C2"}, {"arrows": "to", "from": "Sysmain", "label": "functionality", "to": "executes_commands_on_host"}, {"arrows": "to", "from": "Sysmain", "label": "functionality", "to": "collects_files_for_exfiltration"}, {"arrows": "to", "from": "ClientX", "label": "functionality", "to": "screen_capture_support"}, {"arrows": "to", "from": "ClientX", "label": "functionality", "to": "remote_shell_commands"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "downloads_additional_executables"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "reads_file_content"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "extracts_IE_credentials"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "injects_DLL_into_browsers"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "captures_screenshots"}, {"arrows": "to", "from": "Karagany", "label": "functionality", "to": "enumerates_files_and_documents"}, {"arrows": "to", "from": "Havex Loader", "label": "loads", "to": "decrypted_modules_into_memory"}, {"arrows": "to", "from": "Havex Loader", "label": "communicates_with", "to": "compromised_websites_C2"}, {"arrows": "to", "from": "Havex Loader", "label": "collects", "to": "system_and_network_information"}, {"arrows": "to", "from": "OPC_scanner_module", "label": "scans", "to": "ports_44818_105_502"}, {"arrows": "to", "from": "Network_scanner_module", "label": "scans", "to": "local_network"}, {"arrows": "to", "from": "Contacts_stealer_module", "label": "collects", "to": "Outlook_contact_details"}, {"arrows": "to", "from": "Browser_credential_theft_module", "label": "dumps", "to": "browser_login_credentials"}, {"arrows": "to", "from": "BrowserPasswordDecryptor", "label": "category", "to": "browser_credential_tool_placeholder"}, {"arrows": "to", "from": "Energetic Bear", "label": "observed_using", "to": "CVE-2011-0611"}, {"arrows": "to", "from": "Energetic Bear", "label": "observed_using", "to": "CVE-2013-2465"}, {"arrows": "to", "from": "Energetic Bear", "label": "observed_using", "to": "CVE-2013-1347"}, {"arrows": "to", "from": "Energetic Bear", "label": "observed_using", "to": "CVE-2012-1723"}, {"arrows": "to", "from": "Energetic Bear", "label": "delivers", "to": "malware_via_watering-holing"}, {"arrows": "to", "from": "Energetic Bear", "label": "delivers", "to": "malware_via_spearphishing"}, {"arrows": "to", "from": "Energetic Bear", "label": "delivers", "to": "malware_via_trojanized_installers"}, {"arrows": "to", "from": "Energetic Bear", "label": "deploys", "to": "Havex_Loader"}, {"arrows": "to", "from": "Energetic Bear", "label": "deploys", "to": "Sysmain_backdoor"}, {"arrows": "to", "from": "Energetic Bear", "label": "deploys", "to": "ClientX_backdoor"}, {"arrows": "to", "from": "Energetic Bear", "label": "deploys", "to": "Karagany_backdoor"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

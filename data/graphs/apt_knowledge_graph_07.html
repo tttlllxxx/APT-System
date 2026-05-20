@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#ff6666", "font": {"color": "#000000"}, "id": "Sandworm", "label": "Sandworm", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Industroyer2", "label": "Industroyer2", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "transmission_system_operators", "label": "transmission_system_operators", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Temp.Veles_TRISIS", "label": "Temp.Veles_TRISIS", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "TRISIS_malware", "label": "TRISIS_malware", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "safety_controllers", "label": "safety_controllers", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "FIN12", "label": "FIN12", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Ryuk_ransomware", "label": "Ryuk_ransomware", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "healthcare_energy_companies", "label": "healthcare_energy_companies", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Cuba_Ransomware", "label": "Cuba_Ransomware", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BUGHATCH_loader", "label": "BUGHATCH_loader", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "critical_infrastructure", "label": "critical_infrastructure", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "TRISIS_group", "label": "TRISIS_group", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "EnergeticBear", "label": "EnergeticBear", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Havex_malware", "label": "Havex_malware", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "Lazarus_Group", "label": "Lazarus_Group", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "MATA_framework", "label": "MATA_framework", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "OilRig_APT34", "label": "OilRig_APT34", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "PowBAT_malware", "label": "PowBAT_malware", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "ICS_reconnaissance_tools", "label": "ICS_reconnaissance_tools", "shape": "dot"}, {"color": "#cccccc", "font": {"color": "#000000"}, "id": "multi-platform_intrusions", "label": "multi-platform_intrusions", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "phishing_operations", "label": "phishing_operations", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "post-exploitation_tooling", "label": "post-exploitation_tooling", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Sandworm", "label": "deploys", "to": "Industroyer2"}, {"arrows": "to", "from": "Sandworm", "label": "targets", "to": "transmission_system_operators"}, {"arrows": "to", "from": "Temp.Veles_TRISIS", "label": "deploys", "to": "TRISIS_malware"}, {"arrows": "to", "from": "TRISIS_malware", "label": "manipulates", "to": "safety_controllers"}, {"arrows": "to", "from": "FIN12", "label": "deploys", "to": "Ryuk_ransomware"}, {"arrows": "to", "from": "FIN12", "label": "targets", "to": "healthcare_energy_companies"}, {"arrows": "to", "from": "Cuba_Ransomware", "label": "deploys", "to": "BUGHATCH_loader"}, {"arrows": "to", "from": "Cuba_Ransomware", "label": "targets", "to": "critical_infrastructure"}, {"arrows": "to", "from": "FIN12", "label": "shares_ransomware_infrastructure_with", "to": "Cuba_Ransomware"}, {"arrows": "to", "from": "Sandworm", "label": "considered_operationally_similar_to", "to": "TRISIS_group"}, {"arrows": "to", "from": "EnergeticBear", "label": "uses", "to": "Havex_malware"}, {"arrows": "to", "from": "Lazarus_Group", "label": "uses", "to": "MATA_framework"}, {"arrows": "to", "from": "OilRig_APT34", "label": "uses", "to": "PowBAT_malware"}, {"arrows": "to", "from": "FIN12", "label": "uses", "to": "Ryuk_ransomware"}, {"arrows": "to", "from": "Havex_malware", "label": "related_to", "to": "ICS_reconnaissance_tools"}, {"arrows": "to", "from": "MATA_framework", "label": "used_for", "to": "multi-platform_intrusions"}, {"arrows": "to", "from": "PowBAT_malware", "label": "linked_to", "to": "phishing_operations"}, {"arrows": "to", "from": "Ryuk_ransomware", "label": "linked_to", "to": "post-exploitation_tooling"}, {"arrows": "to", "from": "EnergeticBear", "label": "overlaps_in_targets_with", "to": "OilRig_APT34"}, {"arrows": "to", "from": "Lazarus_Group", "label": "overlaps_in_post_exploitation_with", "to": "FIN12"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

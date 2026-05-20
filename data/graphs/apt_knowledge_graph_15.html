@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#66b3ff", "font": {"color": "#000000"}, "id": "KAMACITE", "label": "KAMACITE", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "electric utilities", "label": "electric utilities", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "oil and gas operations", "label": "oil and gas operations", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "manufacturing", "label": "manufacturing", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "BLACKENERGY2 campaign", "label": "BLACKENERGY2 campaign", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "2015 Ukraine power event", "label": "2015 Ukraine power event", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "2016 Ukraine power event", "label": "2016 Ukraine power event", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "ELECTRUM", "label": "ELECTRUM", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "compromised third-party servers", "label": "compromised third-party servers", "shape": "dot"}, {"color": "#99cc33", "font": {"color": "#000000"}, "id": "phishing", "label": "phishing", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "legitimate services", "label": "legitimate services", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BLACKENERGY2", "label": "BLACKENERGY2", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "BLACKENERGY3", "label": "BLACKENERGY3", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "GREYENERGY", "label": "GREYENERGY", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "Mimikatz", "label": "Mimikatz", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "credentials", "label": "credentials", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "PSExec", "label": "PSExec", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "2014 BLACKENERGY2 Events", "label": "2014 BLACKENERGY2 Events", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "2015 Ukraine Power Event", "label": "2015 Ukraine Power Event", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "2016 Ukraine Power Event", "label": "2016 Ukraine Power Event", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "2017 German Electric Sector Intrusions", "label": "2017 German Electric Sector Intrusions", "shape": "dot"}, {"color": "#ff6666", "font": {"color": "#000000"}, "id": "2019-2020 U.S. Energy Sector Intrusions", "label": "2019-2020 U.S. Energy Sector Intrusions", "shape": "dot"}, {"color": "#ffcc00", "font": {"color": "#000000"}, "id": "Sandworm", "label": "Sandworm", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "custom malware", "label": "custom malware", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "open source tools", "label": "open source tools", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "native system commands", "label": "native system commands", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "credential theft", "label": "credential theft", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "credential reuse", "label": "credential reuse", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "custom port scanners", "label": "custom port scanners", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "ICS-specific plugins", "label": "ICS-specific plugins", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "CRASHOVERRIDE", "label": "CRASHOVERRIDE", "shape": "dot"}, {"color": "#66b3ff", "font": {"color": "#000000"}, "id": "malware", "label": "malware", "shape": "dot"}, {"color": "#ff6666", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_APT_ORG", "label": "APT\u7ec4\u7ec7 / \u653b\u51fb\u8005", "physics": false, "shape": "box", "x": 1500, "y": -1500}, {"color": "#99ffff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_ALIAS", "label": "\u522b\u540d", "physics": false, "shape": "box", "x": 1500, "y": -1420}, {"color": "#ffcc00", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TARGET_ORG", "label": "\u653b\u51fb\u76ee\u6807", "physics": false, "shape": "box", "x": 1500, "y": -1340}, {"color": "#99cc33", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TECH_MITRE", "label": "MITRE \u6280\u672f", "physics": false, "shape": "box", "x": 1500, "y": -1260}, {"color": "#66b3ff", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_TOOL_OR_MALWARE", "label": "\u5de5\u5177/\u6076\u610f\u4ee3\u7801", "physics": false, "shape": "box", "x": 1500, "y": -1180}, {"color": "#ff9966", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_VULN_OR_INFRA", "label": "\u6f0f\u6d1e/\u57fa\u7840\u8bbe\u65bd/IOC", "physics": false, "shape": "box", "x": 1500, "y": -1100}, {"color": "#cccccc", "fixed": true, "font": {"color": "#000000"}, "id": "LEGEND_OTHER", "label": "\u5176\u4ed6", "physics": false, "shape": "box", "x": 1500, "y": -1020}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "KAMACITE", "label": "targets", "to": "electric utilities"}, {"arrows": "to", "from": "KAMACITE", "label": "targets", "to": "oil and gas operations"}, {"arrows": "to", "from": "KAMACITE", "label": "targets", "to": "manufacturing"}, {"arrows": "to", "from": "KAMACITE", "label": "associated_with", "to": "BLACKENERGY2 campaign"}, {"arrows": "to", "from": "KAMACITE", "label": "associated_with", "to": "2015 Ukraine power event"}, {"arrows": "to", "from": "KAMACITE", "label": "associated_with", "to": "2016 Ukraine power event"}, {"arrows": "to", "from": "KAMACITE", "label": "enables", "to": "ELECTRUM"}, {"arrows": "to", "from": "KAMACITE", "label": "transfers_control_to", "to": "ELECTRUM"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "compromised third-party servers"}, {"arrows": "to", "from": "KAMACITE", "label": "uses_technique", "to": "phishing"}, {"arrows": "to", "from": "KAMACITE", "label": "delivered_via", "to": "phishing"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "legitimate services"}, {"arrows": "to", "from": "KAMACITE", "label": "delivers", "to": "BLACKENERGY2"}, {"arrows": "to", "from": "KAMACITE", "label": "delivers", "to": "BLACKENERGY3"}, {"arrows": "to", "from": "KAMACITE", "label": "delivers", "to": "GREYENERGY"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "Mimikatz"}, {"arrows": "to", "from": "KAMACITE", "label": "steals", "to": "credentials"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "PSExec"}, {"arrows": "to", "from": "KAMACITE", "label": "linked_to", "to": "2014 BLACKENERGY2 Events"}, {"arrows": "to", "from": "KAMACITE", "label": "linked_to", "to": "2015 Ukraine Power Event"}, {"arrows": "to", "from": "KAMACITE", "label": "linked_to", "to": "2016 Ukraine Power Event"}, {"arrows": "to", "from": "KAMACITE", "label": "linked_to", "to": "2017 German Electric Sector Intrusions"}, {"arrows": "to", "from": "KAMACITE", "label": "linked_to", "to": "2019-2020 U.S. Energy Sector Intrusions"}, {"arrows": "to", "from": "KAMACITE", "label": "associated_with", "to": "Sandworm"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "custom malware"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "open source tools"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "native system commands"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "credential theft"}, {"arrows": "to", "from": "KAMACITE", "label": "uses", "to": "credential reuse"}, {"arrows": "to", "from": "KAMACITE", "label": "deploys", "to": "custom port scanners"}, {"arrows": "to", "from": "BLACKENERGY2", "label": "has_module", "to": "ICS-specific plugins"}, {"arrows": "to", "from": "BLACKENERGY3", "label": "delivered_via", "to": "phishing"}, {"arrows": "to", "from": "ELECTRUM", "label": "executes", "to": "CRASHOVERRIDE"}, {"arrows": "to", "from": "CRASHOVERRIDE", "label": "category", "to": "malware"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
