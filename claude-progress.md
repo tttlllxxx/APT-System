@@ -81,3 +81,15 @@
 - 更新过的文件或工件：`frontend/src/App.vue`、`frontend/src/style.css`、`feature_list.json`、`claude-progress.md`
 - 已知风险或未解决问题：真实 LLM 联网生成、真实 APT-剧本映射、PCAP 真实解析和生产级登录权限仍未完成；本轮不改后端筛选规则
 - 下一步最佳动作：如继续生产化，应按优先级补登录权限、密钥安全存储、PCAP 真实解析和自动化 UI 回归
+
+### Session 007
+
+- 日期：2026-05-21
+- 本轮目标：按产品要求收敛前端文案和设置/筛选交互
+- 已完成：删除左侧品牌副标题；删除顶部模块摘要小标题；删除防护评估攻击路径标题区刷新按钮和对应前端方法；资产域“清空筛选”按钮改为常驻显示，未选择时禁用、选择后可清空；删除发现溯源上传区 CSV/JSON 字段和 PCAP 占位说明；系统设置页默认空态，点击“LLM 设置”后才显示配置表单
+- 运行过的验证：`./init.sh`、`npm --prefix frontend run build`、`rg` 检查被删除文案和 `reloadDefense` 引用
+- 已记录证据：`./init.sh` 完成后端依赖同步、前端依赖同步、`backend/app` 编译和 `npm build`，退出码 0；`npm --prefix frontend run build` 退出码 0；`rg` 未再命中“电力行业 APT 图谱”、“CSV/JSON 字段”、“PCAP 当前作为入口占位”、`reloadDefense` 和 `currentModuleSummary`
+- 提交记录：本轮创建提交
+- 更新过的文件或工件：`frontend/src/App.vue`、`frontend/src/style.css`、`feature_list.json`、`claude-progress.md`
+- 已知风险或未解决问题：浏览器验收未执行；`./start.sh` 在沙箱内绑定 `127.0.0.1:8000` 和 `0.0.0.0:5173` 失败，已请求放开本地服务启动权限但被拒绝；真实 LLM 联网生成、真实 APT-剧本映射、PCAP 真实解析和生产级登录权限仍未完成
+- 下一步最佳动作：允许启动本地服务后，访问 `http://127.0.0.1:5173/` 人工或自动验证本轮 UI 文案与交互

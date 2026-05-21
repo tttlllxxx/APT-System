@@ -691,6 +691,18 @@ button:disabled {
   max-width: 680px;
 }
 
+.settings-empty {
+  min-height: 220px;
+  display: grid;
+  align-content: center;
+}
+
+.settings-empty p {
+  margin: 8px 0 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
 .settings-form {
   display: grid;
   gap: 12px;

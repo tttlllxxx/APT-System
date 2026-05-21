@@ -5,7 +5,6 @@
         <div class="brand-mark">APT</div>
         <div>
           <h1>攻击画像原型</h1>
-          <p>电力行业 APT 图谱、发现、溯源与评价</p>
         </div>
       </div>
 
@@ -25,7 +24,6 @@
       <header class="topbar">
         <div>
           <h2>{{ currentModuleTitle }}</h2>
-          <p>{{ currentModuleSummary }}</p>
         </div>
         <button class="settings-button" :class="{ active: activeModule === 'settings' }" @click="openSettings">
           系统设置
@@ -63,7 +61,6 @@
               <h3>攻击路径</h3>
               <p>按资产场景域浏览剧本库</p>
             </div>
-            <button class="primary small" @click="reloadDefense">刷新</button>
           </div>
 
           <div class="filter-section">
@@ -82,7 +79,7 @@
                 {{ asset }}
               </button>
             </div>
-            <button v-if="selectedAssets.length" class="small clear-filter" @click="clearPathFilters">
+            <button class="small clear-filter" :disabled="!selectedAssets.length" @click="clearPathFilters">
               清空筛选
             </button>
           </div>
@@ -174,10 +171,6 @@
             <button class="primary" @click="uploadSelectedFile">上传并分析</button>
             <button @click="runDemoAnalysis">使用内置样本</button>
           </div>
-          <p class="hint">
-            CSV/JSON 字段：timestamp、src_ip、dst_ip、protocol、dst_port、event_type、asset、technique、tool、severity、label、expected_apt。
-            PCAP 当前作为入口占位。
-          </p>
         </div>
 
         <div class="analysis-grid" v-if="analysis">
@@ -246,9 +239,11 @@
 
       <section v-if="activeModule === 'settings'" class="module-body settings-layout">
         <div class="settings-menu">
-          <button class="active">LLM 设置</button>
+          <button :class="{ active: activeSettingsPanel === 'llm' }" @click="activeSettingsPanel = 'llm'">
+            LLM 设置
+          </button>
         </div>
-        <div class="panel settings-content">
+        <div v-if="activeSettingsPanel === 'llm'" class="panel settings-content">
           <h3>LLM 设置</h3>
           <div class="settings-form">
             <label class="checkbox-row">
@@ -275,6 +270,10 @@
             <p class="hint">无 Key 或调用失败时使用本地规则库。</p>
           </div>
         </div>
+        <div v-else class="panel settings-empty">
+          <h3>选择设置项</h3>
+          <p>点击左侧设置项后查看和编辑对应配置。</p>
+        </div>
       </section>
     </main>
   </div>
@@ -284,6 +283,7 @@
 import { computed, onMounted, ref } from 'vue'
 
 const activeModule = ref('graphs')
+const activeSettingsPanel = ref(null)
 const overview = ref({ modules: [], metrics: [] })
 const graphs = ref([])
 const selectedGraph = ref(null)
@@ -317,10 +317,6 @@ const modules = computed(() => {
 const currentModuleTitle = computed(() => {
   if (activeModule.value === 'settings') return '系统设置'
   return modules.value.find(item => item.key === activeModule.value)?.name || ''
-})
-const currentModuleSummary = computed(() => {
-  if (activeModule.value === 'settings') return '集中管理系统级配置'
-  return modules.value.find(item => item.key === activeModule.value)?.summary || ''
 })
 const visibleOverviewMetrics = computed(() => (
   overview.value.metrics || []
@@ -360,13 +356,6 @@ function defenseQuery(page = defense.value.page) {
 
 async function loadDefense(page = defense.value.page) {
   defense.value = await api(`/api/paths?${defenseQuery(page)}`)
-}
-
-async function reloadDefense() {
-  selectedPath.value = null
-  pathRecommendations.value = { source: '', items: [] }
-  llmNotice.value = ''
-  await loadDefense(defense.value.page)
 }
 
 async function applyPathFilters() {
@@ -456,6 +445,7 @@ async function saveLlmSettings() {
 
 function openSettings() {
   activeModule.value = 'settings'
+  activeSettingsPanel.value = null
 }
 
 function handleFileChange(event) {
