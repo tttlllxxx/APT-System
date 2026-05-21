@@ -58,23 +58,38 @@
 
       <section v-if="activeModule === 'defense'" class="module-body defense-layout">
         <div class="panel path-browser">
-          <div class="panel-head">
-            <h3>攻击路径</h3>
+          <div class="panel-head path-browser-head">
+            <div>
+              <h3>攻击路径</h3>
+              <p>按资产场景域浏览剧本库</p>
+            </div>
             <button class="primary small" @click="reloadDefense">刷新</button>
           </div>
 
-          <div class="filter-grid">
-            <label>
-              <span>资产</span>
-              <select v-model="selectedAssets" multiple @change="applyPathFilters">
-                <option v-for="asset in defense.filters.assets" :key="asset" :value="asset">{{ asset }}</option>
-              </select>
-            </label>
+          <div class="filter-section">
+            <div class="section-title">
+              <span>资产域筛选</span>
+              <em>{{ assetFilterSummary }}</em>
+            </div>
+            <div class="asset-filter-chips" aria-label="资产域筛选">
+              <button
+                v-for="asset in defense.filters.assets"
+                :key="asset"
+                class="asset-chip"
+                :class="{ active: isAssetSelected(asset) }"
+                @click="toggleAssetFilter(asset)"
+              >
+                {{ asset }}
+              </button>
+            </div>
+            <button v-if="selectedAssets.length" class="small clear-filter" @click="clearPathFilters">
+              清空筛选
+            </button>
           </div>
 
-          <div class="filter-actions">
-            <span>共 {{ defense.total }} 条路径</span>
-            <button class="small" @click="clearPathFilters">清空筛选</button>
+          <div class="path-list-head">
+            <span>路径列表</span>
+            <em>共 {{ defense.total }} 条路径</em>
           </div>
 
           <div class="path-list">
@@ -85,9 +100,9 @@
               :class="{ active: selectedPath?.id === path.id }"
               @click="selectAttackPath(path)"
             >
-              <strong>{{ path.id }}</strong>
-              <span>{{ path.target }}</span>
-              <em>{{ path.scenario }}</em>
+              <strong class="path-id">{{ path.id }}</strong>
+              <span class="path-target">{{ path.target }}</span>
+              <em class="path-scenario">{{ path.scenario }}</em>
             </button>
           </div>
 
@@ -108,8 +123,8 @@
 
         <div class="panel path-detail">
           <template v-if="selectedPath">
-            <div class="panel-head">
-              <div>
+            <div class="panel-head path-detail-head">
+              <div class="path-copy">
                 <h3>{{ selectedPath.target }}</h3>
                 <p>{{ selectedPath.scenario }}</p>
               </div>
@@ -311,6 +326,10 @@ const visibleOverviewMetrics = computed(() => (
   overview.value.metrics || []
 ).filter(metric => metric.name !== '电力资产'))
 const totalPathPages = computed(() => Math.max(1, Math.ceil(defense.value.total / defense.value.page_size)))
+const assetFilterSummary = computed(() => {
+  const scope = selectedAssets.value.length ? `已选 ${selectedAssets.value.length} 个资产域` : '全部资产域'
+  return `${scope} / 共 ${defense.value.total} 条路径`
+})
 const llmConfigured = computed(() => (
   llmForm.value.enabled && Boolean(llmForm.value.api_key)
 ))
@@ -355,6 +374,19 @@ async function applyPathFilters() {
   pathRecommendations.value = { source: '', items: [] }
   llmNotice.value = ''
   await loadDefense(1)
+}
+
+function isAssetSelected(asset) {
+  return selectedAssets.value.includes(asset)
+}
+
+async function toggleAssetFilter(asset) {
+  if (isAssetSelected(asset)) {
+    selectedAssets.value = selectedAssets.value.filter(item => item !== asset)
+  } else {
+    selectedAssets.value = [...selectedAssets.value, asset]
+  }
+  await applyPathFilters()
 }
 
 async function clearPathFilters() {

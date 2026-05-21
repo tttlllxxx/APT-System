@@ -69,3 +69,15 @@
 - 更新过的文件或工件：`.gitignore`、`claude-progress.md`
 - 已知风险或未解决问题：沿用 Session 004 风险；真实 LLM 联网生成、真实 APT-剧本映射、PCAP 真实解析和生产级登录权限仍未完成
 - 下一步最佳动作：如继续生产化，应按优先级补登录权限、密钥安全存储、PCAP 真实解析和自动化 UI 回归
+
+### Session 006
+
+- 日期：2026-05-21
+- 本轮目标：优化防护评估攻击路径里的资产筛选框和整体工作台式布局
+- 已完成：将资产原生多选框改为 10 个资产域标签按钮，支持多选、取消选中和清空筛选；左侧路径浏览面板拆为筛选区、路径列表区和分页区；路径行稳定为编号、资产、场景摘要三段式；右侧路径详情头部增加独立文案和 LLM 操作区布局
+- 运行过的验证：`./init.sh`、`npm --prefix frontend run build`、`GET /api/paths?page=1&page_size=2`、`GET /api/paths?assets=变电站域,调度控制域&page=1&page_size=2`、`GET /api/paths/APT-SCRIPT-ELEC-0001/recommendations?llm=true`、用户人工浏览器验证防护评估页
+- 已记录证据：`npm --prefix frontend run build` 退出码 0；`/api/paths?page=1&page_size=2` 返回 10 个资产域 filters 和 total=1000；`/api/paths?assets=变电站域,调度控制域&page=1&page_size=2` 返回 total=368；未配置 LLM 增强仍返回 HTTP 400 和未配置提示；用户人工验证标签多选、取消、清空交互，服务日志显示对应 `/api/paths` 请求均为 200
+- 提交记录：本轮创建提交
+- 更新过的文件或工件：`frontend/src/App.vue`、`frontend/src/style.css`、`feature_list.json`、`claude-progress.md`
+- 已知风险或未解决问题：真实 LLM 联网生成、真实 APT-剧本映射、PCAP 真实解析和生产级登录权限仍未完成；本轮不改后端筛选规则
+- 下一步最佳动作：如继续生产化，应按优先级补登录权限、密钥安全存储、PCAP 真实解析和自动化 UI 回归
